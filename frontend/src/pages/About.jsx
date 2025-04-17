@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { GiSupersonicBullet } from "react-icons/gi";
 
 import travel from "../assets/travel.jpg";
-
+import React from "react";
 const About = () => {
   return (
     <section>

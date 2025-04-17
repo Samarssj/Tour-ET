@@ -1,6 +1,6 @@
 import { type } from "@testing-library/user-event/dist/type";
 import { createContext, useEffect, useReducer } from "react";
-
+import React  from 'react';
 export const AuthContext = createContext();
 
 export const AuthReducer = (state, action) => {

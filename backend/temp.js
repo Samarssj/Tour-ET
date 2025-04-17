@@ -8,8 +8,6 @@ import dotenv from "dotenv";
 dotenv.config()
 
 
-
-
 async function connectToDb() {
     try {
         mongoose.set('strictQuery', false);

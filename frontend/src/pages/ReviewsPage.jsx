@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
-
+import React from "react";
 import Review from "../Component/Review";
 
 import { useAuthContext } from "../customHook/useAuthContext";

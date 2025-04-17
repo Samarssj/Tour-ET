@@ -4,7 +4,7 @@ import jegol from "../../assets/jegol.jpg";
 import eruption from "../../assets/eruption.jpg";
 import ethiopia from "../../assets/ethiopia.jpg";
 import africa from "../../assets/african-woman.gif";
-
+import React from "react";
 const Ethiopia = () => {
   return (
     <div className="ethiopia">

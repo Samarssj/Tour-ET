@@ -2,7 +2,7 @@ import { type } from "@testing-library/user-event/dist/type";
 import { createContext, useEffect, useReducer } from "react";
 import { useAuthContext } from "../customHook/useAuthContext";
 import useFetch from "../customHook/useFetch";
-
+import React from "react";
 export const CartContext = createContext();
 
 const reducer = (state, action) => {
