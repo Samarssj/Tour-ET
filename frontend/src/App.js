@@ -17,6 +17,7 @@ import Footer from "./Component/static/Footer";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Ethiopia from "./pages/Ethiopia/Ethiopia";
 import React from "react";
+
 function App() {
   return (
     <div className="App">
@@ -73,5 +74,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;

@@ -37,7 +37,6 @@ app.use("/api/hotel", hotelRouter);
 app.use("/api/room", roomRouter);
 app.use("/api/booking", bookingRouter);
 
-
 mongoose.set("strictQuery", false);
 async function connectToDb() {
   try {
@@ -51,6 +50,7 @@ async function connectToDb() {
     console.log(error.message);
   }
 }
+
 
 async function startServer() {
   try {
@@ -67,4 +67,5 @@ async function startServer() {
 }
 
 connectToDb();
+
 startServer();
