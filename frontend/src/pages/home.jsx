@@ -179,7 +179,7 @@ const Home = () => {
               <figure className="card">
                 <img
                   className="card-img-top img-fluid"
-                  src="https://www.nomadicethiopia.com/wp-content/uploads/2021/04/axum-by-nomadic-ethiopia-tour.jpg"
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Axum_Stele_at_night.jpg/800px-Axum_Stele_at_night.jpg"
                   alt="img"
                 />
                 <figcaption className="mt-3 card-body">
