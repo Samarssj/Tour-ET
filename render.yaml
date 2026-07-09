@@ -1,0 +1,28 @@
+services:
+  # Backend service
+  - type: web
+    name: tesystem-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node app.js
+    envVars:
+      - key: NODE_VERSION
+        value: 18.0.0
+      - key: MONGODBURL
+        sync: false # User will provide this
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: 5000
+
+  # Frontend service
+  - type: web
+    name: tesystem-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: build
+    envVars:
+      - key: REACT_APP_BACKEND_URL
+        value: https://tesystem-backend.onrender.com/api
