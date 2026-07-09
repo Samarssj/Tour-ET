@@ -54,18 +54,15 @@ async function connectToDb() {
 
 async function startServer() {
   try {
-    app.use(
-      cors({
-        origin: "http://localhost:3000",
-      })
-    );
-    app.listen(process.env.PORT, (error) => {});
-    console.log(`Listening through port ${process.env.PORT}`);
+    app.use(cors());
+    app.listen(process.env.PORT, () => {
+      console.log(`Listening through port ${process.env.PORT}`);
+    });
   } catch (error) {
     console.log(error.message);
   }
 }
 
-connectToDb();
-
-startServer();
+connectToDb().then(() => {
+  startServer();
+});
