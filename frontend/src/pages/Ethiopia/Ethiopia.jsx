@@ -7,7 +7,7 @@ import africa from "../../assets/african-woman.gif";
 import React from "react";
 const Ethiopia = () => {
   return (
-    <div className="ethiopia">
+    <div className="ethiopia main-content-wrapper">
       <div className="ethio-head">
         <div className="ethio-topic">
           <h3 className="ethio">ETHIOPIA</h3>

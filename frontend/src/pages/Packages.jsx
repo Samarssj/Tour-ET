@@ -72,7 +72,7 @@ const Packages = () => {
   };
 
   return (
-    <section style={{ background: "#f2f5f9" }}>
+    <section className="main-content-wrapper">
       <div className="container-md ">
         <div className="row justify-content-around ">
           <article className="bg-dark shadow me-2 border h-100 col-12 col-md-3 d-flex flex-column justify-content-start  mt-5">
@@ -167,10 +167,10 @@ const Packages = () => {
 
           <article
             className=" col-12 col-md-8 my-5  "
+            className="packages-list-container"
             style={{
               overflowY: "scroll",
               height: "80vh",
-              background: "rgb(250,250,250)",
             }}
           >
             {datas.length === 0 && (
@@ -185,7 +185,7 @@ const Packages = () => {
 
                 return (
                   <article
-                    className="bg-white row m-0 align-items-center shadow mb-3 border"
+                    className="package-item-card row m-0 align-items-center shadow mb-3 border"
                     key={_id}
                   >
                     <img

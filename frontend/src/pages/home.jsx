@@ -53,7 +53,7 @@ const Home = () => {
   }, [data]);
 
   return (
-    <div className="" style={{ background: "#f2f5f9" }}>
+    <div className="main-content-wrapper">
       <div className="search position-relative ms-auto me-auto">
         <div className="position-absolute w-100 top-50 start-50 translate-middle">
           <div

@@ -1,3 +1,25 @@
+:root {
+  --bg-color: #f2f5f9;
+  --text-color: #212529;
+  --card-bg: #ffffff;
+  --nav-bg: #212529;
+  --footer-bg: #202020;
+  --border-color: #dee2e6;
+  --accent-color: #0d6efd;
+  --secondary-text: #6c757d;
+}
+
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --card-bg: #1e1e1e;
+  --nav-bg: #1a1a1a;
+  --footer-bg: #0a0a0a;
+  --border-color: #333333;
+  --accent-color: #bb86fc;
+  --secondary-text: #b0b0b0;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,6 +27,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 code {
@@ -12,34 +37,47 @@ code {
     monospace;
 }
 
-/* Dark Mode Styles */
-body.dark-mode {
-  background-color: #121212 !important;
-  color: #e0e0e0 !important;
+/* Global Overrides for Dark Mode */
+body.dark-mode .card {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
 }
 
 body.dark-mode .navbar {
-  background-color: #1f1f1f !important;
+  background-color: var(--nav-bg) !important;
 }
 
-body.dark-mode .card {
-  background-color: #1e1e1e !important;
-  color: #e0e0e0 !important;
-  border-color: #333 !important;
+body.dark-mode .footer, 
+body.dark-mode div[style*="background-color: #202020"],
+body.dark-mode div[style*="background-color: rgb(32, 32, 32)"] {
+  background-color: var(--footer-bg) !important;
 }
 
-body.dark-mode .footer {
-  background-color: #1a1a1a !important;
-  border-top-color: #333 !important;
+body.dark-mode .text-dark,
+body.dark-mode .text-secondary,
+body.dark-mode .card-title,
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3, body.dark-mode h4 {
+  color: var(--text-color) !important;
+}
+
+body.dark-mode .text-muted,
+body.dark-mode .descs,
+body.dark-mode .card-text {
+  color: var(--secondary-text) !important;
+}
+
+body.dark-mode .bg-light {
+  background-color: #2c2c2c !important;
 }
 
 body.dark-mode .btn-outline-primary {
-  color: #bb86fc !important;
-  border-color: #bb86fc !important;
+  color: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
 }
 
 body.dark-mode .btn-outline-primary:hover {
-  background-color: #bb86fc !important;
+  background-color: var(--accent-color) !important;
   color: #121212 !important;
 }
 
@@ -47,14 +85,51 @@ body.dark-mode input,
 body.dark-mode textarea, 
 body.dark-mode select {
   background-color: #2c2c2c !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Fix for hard-coded background in Home.jsx */
+.main-content-wrapper {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+}
+
+body.dark-mode hr {
+  border-color: var(--border-color) !important;
+  opacity: 0.2;
+}
+
+/* Additional Theme-Aware Classes */
+.packages-list-container {
+  background-color: var(--card-bg) !important;
+}
+
+.package-item-card {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+body.dark-mode .bg-dark {
+  background-color: #000000 !important;
+}
+
+body.dark-mode .text-white {
+  color: #ffffff !important;
+}
+
+body.dark-mode .btn-outline-info {
+  color: #03dac6 !important;
+  border-color: #03dac6 !important;
+}
+
+body.dark-mode .form-select {
+  background-color: #2c2c2c !important;
   color: #e0e0e0 !important;
   border-color: #444 !important;
 }
 
-body.dark-mode .text-dark {
-  color: #e0e0e0 !important;
-}
-
-body.dark-mode .bg-light {
-  background-color: #2c2c2c !important;
+body.dark-mode .main-content-wrapper {
+  background-color: var(--bg-color) !important;
 }
