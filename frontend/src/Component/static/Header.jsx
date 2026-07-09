@@ -1,4 +1,6 @@
 import React, { useContext } from "react";
+import { FaSun, FaMoon } from "react-icons/fa";
+import { ThemeContext } from "../../context/ThemeContext";
 import logo from "../../assets/lo.png";
 import { Link, useHistory } from "react-router-dom";
 import { FaLuggageCart } from "react-icons/fa";
@@ -12,6 +14,7 @@ const Header = () => {
   const { pathname } = useLocation();
   const { state, dispatch: dis2 } = useContext(CartContext);
   const { user, dispatch: dis1 } = useAuthContext();
+  const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const handleLogout = () => {
     dis1({ type: "LOGOUT" });
     localStorage.removeItem("user");
@@ -163,7 +166,14 @@ const Header = () => {
               </span>
             </button>
           )}
-          <Nav className="bg-dark text-light gap-3">
+          <Nav className="bg-dark text-light gap-3 align-items-center">
+            <button
+              onClick={toggleTheme}
+              className="btn btn-outline-light ms-3"
+              style={{ borderRadius: "50%", padding: "5px 10px" }}
+            >
+              {isDarkMode ? <FaSun color="yellow" /> : <FaMoon />}
+            </button>
             {user && (
               <div>
                 <Link
