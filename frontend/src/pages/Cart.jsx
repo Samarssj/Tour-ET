@@ -9,7 +9,7 @@ function Cart() {
   const removeFromcart = async (item) => {
     dispatch({ type: "REMOVE", item });
     const response = await fetch(
-      `https://tour-et.onrender.com/api/wishlist/${item._id}
+      `${process.env.REACT_APP_BACKEND_URL}/wishlist/${item._id}
       `,
       {
         method: "DELETE",

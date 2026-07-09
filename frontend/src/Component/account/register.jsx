@@ -18,7 +18,7 @@ const Register = () => {
     e.preventDefault();
 
     const response = await fetch(
-      "https://tour-et.onrender.com/api/user/signup",
+      `${process.env.REACT_APP_BACKEND_URL}/user/signup`,
       {
         method: "POST",
 

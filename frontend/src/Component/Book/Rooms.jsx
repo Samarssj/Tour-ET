@@ -10,7 +10,7 @@ function Rooms({ id, image, name, isRoom, setIsRoom, description }) {
 
   const fetchRoom = async () => {
     const res = await fetch(
-      `https://tour-et.onrender.com/api/hotel/${id}/room?taken=true`,
+      `${process.env.REACT_APP_BACKEND_URL}/hotel/${id}/room?taken=true`,
       {
         headers: { Authorization: `Bearer ${user.token}` },
       }

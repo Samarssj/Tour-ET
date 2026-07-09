@@ -15,10 +15,10 @@ function Book() {
   const [totalPrice, setTotal] = useState(0);
   const { user } = useAuthContext();
   const { data: hotels } = useFetch(
-    `https://tour-et.onrender.com/api/package/${id}/hotel`
+    `${process.env.REACT_APP_BACKEND_URL}/package/${id}/hotel`
   );
   const { data: pkg } = useFetch(
-    `https://tour-et.onrender.com/api/package/${id}`
+    `${process.env.REACT_APP_BACKEND_URL}/package/${id}`
   );
 
   const handleSumbit = async (e) => {
@@ -34,7 +34,7 @@ function Book() {
       price: totalPrice,
     };
     await fetch(
-      `https://tour-et.onrender.com/api/booking/
+      `${process.env.REACT_APP_BACKEND_URL}/booking/
       `,
       {
         method: "POST",
@@ -54,7 +54,7 @@ function Book() {
     };
     console.log(pkg.pricePerAdult, parseInt(numTour));
     const response = await fetch(
-      `https://tour-et.onrender.com/api/booking/price/
+      `${process.env.REACT_APP_BACKEND_URL}/booking/price/
     `,
       {
         method: "POST",

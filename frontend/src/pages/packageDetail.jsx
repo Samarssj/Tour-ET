@@ -12,7 +12,7 @@ import useFetch from "../customHook/useFetch";
 function PackageDetail() {
   const { id } = useParams();
   const { data: site } = useFetch(
-    `https://tour-et.onrender.com/api/package/${id}`
+    `${process.env.REACT_APP_BACKEND_URL}/package/${id}`
   );
   const [itemAdded, setItemAdded] = useState(false);
   const { state, dispatch } = useContext(CartContext);
@@ -26,7 +26,7 @@ function PackageDetail() {
     }
 
     const response = await fetch(
-      `https://tour-et.onrender.com/api/wishlist
+      `${process.env.REACT_APP_BACKEND_URL}/wishlist
       `,
       {
         method: "POST",

@@ -20,7 +20,7 @@ const ReviewsPage = () => {
   const rateStars = Array(5).fill(0);
   const { user } = useAuthContext();
   const { data: site } = useFetch(
-    `https://tour-et.onrender.com/api/package/${id}`
+    `${process.env.REACT_APP_BACKEND_URL}/package/${id}`
   );
 
   const handelSubmit = async (e) => {
@@ -31,7 +31,7 @@ const ReviewsPage = () => {
       return;
     }
     const response = await fetch(
-      `https://tour-et.onrender.com/api/comment
+      `${process.env.REACT_APP_BACKEND_URL}/comment
       `,
       {
         method: "POST",
@@ -47,7 +47,7 @@ const ReviewsPage = () => {
       }
     );
     const response1 = await fetch(
-      `https://tour-et.onrender.com/api/package/${id}
+      `${process.env.REACT_APP_BACKEND_URL}/package/${id}
       `,
       {
         method: "PATCH",

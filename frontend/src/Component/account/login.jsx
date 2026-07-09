@@ -15,7 +15,7 @@ const Login = () => {
   const handelSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch(
-      "https://tour-et.onrender.com/api/user/login",
+      `${process.env.REACT_APP_BACKEND_URL}/user/login`,
       {
         method: "POST",
         headers: {

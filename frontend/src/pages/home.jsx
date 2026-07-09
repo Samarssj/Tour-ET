@@ -24,16 +24,16 @@ const Home = () => {
     text: "Ethiopia is home to the lowest place on the African continent, the Danakil Depression.The depression is at the junction of three tectonic plates in the Horn of Africa, and sits at approximately 125 metres below sea level. At 200 kilometres long by 50 metres wide, this relatively small desert is also home to roughly 25% of Africa’s volcanoes!",
   };
   const { data: recentpkg } = useFetch(
-    "https://tour-et.onrender.com/api/package"
+    `${process.env.REACT_APP_BACKEND_URL}/package`
   );
   const { data: popularPkg } = useFetch(
-    "https://tour-et.onrender.com/api/package?sort=rating"
+    `${process.env.REACT_APP_BACKEND_URL}/package?sort=rating`
   );
 
   const [s_name, setName] = useState("");
   const [cityList, setCityList] = useState([]);
   const { data } = useFetch(
-    `https://tour-et.onrender.com/api/package?location=${s_name}`,
+    `${process.env.REACT_APP_BACKEND_URL}/package?location=${s_name}`,
     s_name
   );
 

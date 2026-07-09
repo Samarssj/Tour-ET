@@ -10,7 +10,7 @@ const Packages = () => {
   const [dropDown, setDropDown] = useState({});
   const [page, setPage] = useState(1);
   const { data } = useFetch(
-    `https://tour-et.onrender.com/api/package?page=${page}`,
+    `${process.env.REACT_APP_BACKEND_URL}/package?page=${page}`,
     page
   );
   useEffect(() => {
@@ -54,7 +54,7 @@ const Packages = () => {
     }
 
     const response = await fetch(
-      `https://tour-et.onrender.com/api/package?${type && `type=${type}`}&${
+      `${process.env.REACT_APP_BACKEND_URL}/package?${type && `type=${type}`}&${
         price && `priceRange=${price}`
       }&${rate && `rating=${rate}`}`
     );

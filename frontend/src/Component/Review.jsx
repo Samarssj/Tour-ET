@@ -15,7 +15,7 @@ function Review({ unique }) {
 
   const fetchReview = async () => {
     const response = await fetch(
-      `https://tour-et.onrender.com/api/package/${unique}/comment`
+      `${process.env.REACT_APP_BACKEND_URL}/package/${unique}/comment`
     );
     const result = await response.json();
 

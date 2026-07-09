@@ -23,7 +23,7 @@ export const CartContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, []);
   const { user } = useAuthContext();
   const { data } = useFetch(
-    `https://tour-et.onrender.com/api/wishlist
+    `${process.env.REACT_APP_BACKEND_URL}/wishlist
     `,
     user
   );
