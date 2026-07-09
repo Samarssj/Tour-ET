@@ -44,7 +44,7 @@ const Login = () => {
   };
 
   return (
-    <section style={{ background: "#c7e1ec" }}>
+    <section className="auth-section">
       <div
         className="container-md d-flex align-items-center justify-content-center"
         style={{ height: "100vh" }}
@@ -55,7 +55,8 @@ const Login = () => {
         >
           <div
             className=" col-md-6 p-5  shadow"
-            style={{ borderRadius: "50px", background: "#ecf5f8" }}
+            className="col-md-6 p-5 shadow auth-card"
+            style={{ borderRadius: "50px" }}
           >
             <div>{error && <p>{error}</p>}</div>
             <div className="form text-start">
