@@ -179,7 +179,7 @@ const Home = () => {
               <figure className="card">
                 <img
                   className="card-img-top img-fluid"
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Axum_Stele_at_night.jpg/800px-Axum_Stele_at_night.jpg"
+                  src="https://images.unsplash.com/photo-1599834164807-633857597148?auto=format&fit=crop&w=600&q=60"
                   alt="img"
                 />
                 <figcaption className="mt-3 card-body">
