@@ -4,7 +4,7 @@ dotenv.config();
 import jwt from "jsonwebtoken";
 import validator from "validator";
 import bcrypt from "bcryptjs";
-import { authorizationChecker } from "../middleware/auth.js";
+import { authorizationChecker, authorize } from "../middleware/auth.js";
 
 export const getAllUsers = async (req, res) => {
   const auth = await authorizationChecker(req);
@@ -56,7 +56,7 @@ export const signup = async (req, res) => {
     const token = jwt.sign({ _id: newUser._id }, process.env.KEY);
     res.status(201).json({ data: { token, detail: newUser } });
   } catch (error) {
-    return res.status(401).json({ msg: error.message });
+    return res.status(500).json({ msg: error.message });
   }
 };
 
@@ -74,7 +74,7 @@ export const login = async (req, res) => {
     const token = jwt.sign({ _id: user._id }, process.env.KEY);
     res.status(201).json({ data: { token, detail: user } });
   } catch (error) {
-    res.json({ msg: error.message });
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -94,7 +94,7 @@ export const updateUser = async (req, res) => {
     }
 
     const user = await User.findOneAndUpdate(
-      { _id: auth.id },
+      { _id: auth._id },
       { ...req.body, password },
       {
         new: true,
@@ -103,6 +103,11 @@ export const updateUser = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ msg: "No such user " });
+    }
+
+    if (typeof auth === "object" && auth.role !== "admin") {
+      const authCheck = authorize(res, auth, "admin");
+      if (authCheck !== true) return authCheck;
     }
 
     res.status(200).json({ success: true, data: user });

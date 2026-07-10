@@ -7,7 +7,7 @@ export async function authorizationChecker(req, res) {
     const { authorization } = req.headers;
 
     if (!authorization) {
-      return res.status(401).json({ message: "Authorization header missing" });
+      return "NO-TOKEN";
     }
 
     const token = authorization.split(" ")[1];
@@ -25,12 +25,13 @@ export async function authorizationChecker(req, res) {
       return user;
     }
   } catch (error) {
-    return res.status(500).json({ message: "Internal server error auth 29" });
+    return "NO-TOKEN";
   }
 }
 
 export function authorize(res, user, role) {
-  if (user.role != role) {
-    return res.status(400).json({ msg: "not authorized" });
+  if (user && user.role != role) {
+    return res.status(403).json({ msg: "not authorized" });
   }
+  return true;
 }
