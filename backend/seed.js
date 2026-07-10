@@ -156,18 +156,11 @@ async function seed() {
     });
     console.log("Connected to database successfully");
 
-    // Check if data already exists
+    // Always clear and re-seed to ensure fresh data
     const count = await Package.countDocuments();
-    if (count > 1) {
-      console.log(`Database already has ${count} packages. Skipping seed.`);
-      process.exit(0);
-    }
-
-    // Delete existing data if it's the old single package
-    if (count === 1) {
-      await Package.deleteMany({});
-      console.log("Cleared old data. Seeding fresh packages...");
-    }
+    console.log(`Found ${count} existing packages. Clearing and reseeding...`);
+    await Package.deleteMany({});
+    console.log("Cleared old data.");
 
     // Insert packages
     const result = await Package.insertMany(packages);
