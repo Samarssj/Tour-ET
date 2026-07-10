@@ -38,7 +38,7 @@ const Register = () => {
     }
     if (response.ok) {
       localStorage.setItem("user", JSON.stringify(result.data));
-      dispatch({ type: "LOGIN", user: result.data });
+      dispatch({ type: "LOGIN", payload: result.data });
       history.push("/");
     }
   };
