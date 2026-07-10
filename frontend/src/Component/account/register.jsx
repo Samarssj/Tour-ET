@@ -16,8 +16,10 @@ const Register = () => {
 
   const handelSubmit = async (e) => {
     e.preventDefault();
+    console.log("Starting registration with info:", fullInfo);
 
-    const response = await fetch(
+    try {
+      const response = await fetch(
       `${process.env.REACT_APP_BACKEND_URL}/user/signup`,
       {
         method: "POST",
@@ -29,17 +31,24 @@ const Register = () => {
       }
     );
 
-    const result = await response.json();
-    if (!fullInfo) {
-      setError("enter full credential");
-    }
-    if (!response.ok) {
-      setError(result.msg);
-    }
-    if (response.ok) {
-      localStorage.setItem("user", JSON.stringify(result.data));
-      dispatch({ type: "LOGIN", payload: result.data });
-      history.push("/");
+      const result = await response.json();
+      console.log("Registration response received:", result);
+      if (!fullInfo) {
+        setError("enter full credential");
+      }
+      if (!response.ok) {
+        console.error("Registration failed:", result.msg);
+        setError(result.msg);
+      }
+      if (response.ok) {
+        console.log("Registration successful, redirecting...");
+        localStorage.setItem("user", JSON.stringify(result.data));
+        dispatch({ type: "LOGIN", payload: result.data });
+        history.push("/");
+      }
+    } catch (err) {
+      console.error("Fetch error during registration:", err);
+      setError("Network error. Please check your connection.");
     }
   };
 
