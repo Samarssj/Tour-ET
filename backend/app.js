@@ -14,20 +14,8 @@ import wishlistRouter from "./routes/wishlistRouter.js";
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
-
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Authorization, Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, DELETE, OPTIONS"
-  );
-  next();
-});
 
 app.use("/api/package", packageRouter);
 app.use("/api/comment", commentRouter);
@@ -54,7 +42,6 @@ async function connectToDb() {
 
 async function startServer() {
   try {
-    app.use(cors());
     app.listen(process.env.PORT, () => {
       console.log(`Listening through port ${process.env.PORT}`);
     });
