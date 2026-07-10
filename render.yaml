@@ -24,5 +24,7 @@ services:
     buildCommand: npm install && npm run build
     staticPublishPath: build
     envVars:
+      - key: NODE_VERSION
+        value: 18.0.0
       - key: REACT_APP_BACKEND_URL
         value: https://tesystem-backend.onrender.com/api
