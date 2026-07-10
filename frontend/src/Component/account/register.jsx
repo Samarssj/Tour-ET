@@ -16,6 +16,7 @@ const Register = () => {
 
   const handelSubmit = async (e) => {
     e.preventDefault();
+    console.log("Backend URL being used:", process.env.REACT_APP_BACKEND_URL);
     console.log("Starting registration with info:", fullInfo);
 
     try {
