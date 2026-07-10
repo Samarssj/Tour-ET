@@ -1,7 +1,7 @@
 services:
   # Backend service
   - type: web
-    name: tesystem-backend
+    name: tesystem
     env: node
     rootDir: backend
     buildCommand: npm install
@@ -27,4 +27,4 @@ services:
       - key: NODE_VERSION
         value: 18.17.0
       - key: REACT_APP_BACKEND_URL
-        value: https://tesystem-backend.onrender.com/api
+        value: https://tesystem.onrender.com/api
