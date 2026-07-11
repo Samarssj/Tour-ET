@@ -52,10 +52,17 @@ function PackageDetail() {
   }, []);
 
   if (!site) {
-    return;
+    return <p className="text-center py-5">Loading package details...</p>;
   }
-  const stars = Array(Math.round(site?.rating)).fill(0);
-  const description = site?.description[0];
+
+  const stars = Array(Math.round(site?.rating || 0)).fill(0);
+  const description = site?.description?.[0] || {};
+  const included = description.included || [];
+  const notIncluded = description.notIncluded || [];
+  const expect = description.expect || [];
+  const additionalInfo = description.additionalInfo || [];
+  const policy = description.policy || [];
+  const mainText = description.main?.[0] || "";
 
   return (
     <section className="bg-light">
@@ -67,7 +74,7 @@ function PackageDetail() {
             data-bs-ride="carousel"
           >
             <div className="carousel-inner">
-              {site.image.map((im, index) => {
+              {(site.image || []).map((im, index) => {
                 if (index === 0) {
                   return (
                     <div className="image carousel-item active" key={index}>
@@ -121,7 +128,7 @@ function PackageDetail() {
           <div className="pkg-detail col-12 col-md-6 ">
             <h1 className="display-5 fw-bold d-inline">{site.name}</h1>
             <h6 className="text-muted">/{site.location}</h6>
-            {<p className="text-start py-2 ">{description.main[0]}</p>}
+            {<p className="text-start py-2 ">{mainText}</p>}
             <div className="text-start">
               {stars.map((_, index) => {
                 return <FaStar key={index} />;
@@ -209,13 +216,17 @@ function PackageDetail() {
                 data-bs-parent="#accordionFlushExample"
               >
                 <div className="accordion-body">
-                  {description.included.map((info, index) => {
-                    return (
-                      <p key={index}>
-                        <GiSupersonicBullet /> {info}
-                      </p>
-                    );
-                  })}{" "}
+                  {included.length > 0 ? (
+                    included.map((info, index) => {
+                      return (
+                        <p key={index}>
+                          <GiSupersonicBullet /> {info}
+                        </p>
+                      );
+                    })
+                  ) : (
+                    <p className="text-muted">No information provided.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -239,13 +250,17 @@ function PackageDetail() {
                 data-bs-parent="#accordionFlushExample"
               >
                 <div className="accordion-body">
-                  {description.notIncluded.map((info, index) => {
-                    return (
-                      <p key={index}>
-                        <GiSupersonicBullet /> {info}{" "}
-                      </p>
-                    );
-                  })}{" "}
+                  {notIncluded.length > 0 ? (
+                    notIncluded.map((info, index) => {
+                      return (
+                        <p key={index}>
+                          <GiSupersonicBullet /> {info}{" "}
+                        </p>
+                      );
+                    })
+                  ) : (
+                    <p className="text-muted">No information provided.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -269,16 +284,20 @@ function PackageDetail() {
                 data-bs-parent="#accordionFlushExample"
               >
                 <div className="accordion-body">
-                  {description.expect.map((ex) => {
-                    return (
-                      <>
-                        {ex.map((e, idx) => {
-                          return <p key={idx}>{e} </p>;
-                        })}
-                        <hr />
-                      </>
-                    );
-                  })}{" "}
+                  {expect.length > 0 ? (
+                    expect.map((ex, i) => {
+                      return (
+                        <React.Fragment key={i}>
+                          {ex.map((e, idx) => {
+                            return <p key={idx}>{e} </p>;
+                          })}
+                          <hr />
+                        </React.Fragment>
+                      );
+                    })
+                  ) : (
+                    <p className="text-muted">No information provided.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -302,13 +321,17 @@ function PackageDetail() {
                 data-bs-parent="#accordionFlushExample"
               >
                 <div className="accordion-body">
-                  {description.additionalInfo.map((info, index) => {
-                    return (
-                      <p key={index}>
-                        <GiSupersonicBullet /> {info}{" "}
-                      </p>
-                    );
-                  })}{" "}
+                  {additionalInfo.length > 0 ? (
+                    additionalInfo.map((info, index) => {
+                      return (
+                        <p key={index}>
+                          <GiSupersonicBullet /> {info}{" "}
+                        </p>
+                      );
+                    })
+                  ) : (
+                    <p className="text-muted">No information provided.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -331,7 +354,7 @@ function PackageDetail() {
                 aria-labelledby="flush-headingFive"
                 data-bs-parent="#accordionFlushExample"
               >
-                <div className="accordion-body">{description.policy[0]} </div>
+                <div className="accordion-body">{policy[0] || "No policy provided."} </div>
               </div>
             </div>
           </div>
