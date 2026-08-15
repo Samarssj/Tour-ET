@@ -1,11 +1,61 @@
-# Tour ET. : Explore Ethiopia
+# 🌍 Tour ET : Explore Ethiopia
 
-Tour ET is an innovative web application designed to transform travel experiences in Ethiopia. Leveraging the MERN stack and Bootstrap, this platform offers an intuitive and comprehensive approach to discovering Ethiopia, from city escapades to historical adventures.
+<p align="center">
+  <img src="https://img.shields.io/badge/MERN-Stack-blue.svg" alt="MERN Stack">
+  <img src="https://img.shields.io/badge/Deployed-Render-brightgreen.svg" alt="Deployed on Render">
+  <img src="https://img.shields.io/badge/Database-MongoDB%20Atlas-green.svg" alt="Database MongoDB Atlas">
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License MIT">
+</p>
 
-# Introduction
-Welcome to the Tour ET. App - a state-of-the-art tour and travel  interactive and comprehensive online system. Built with MERN full stack.
+**Tour ET** is a state-of-the-art, full-stack interactive travel platform designed to showcase the beauty of Ethiopia. From the historical rock-hewn churches of Lalibela to the modern vibes of Addis Ababa, this application provides a seamless experience for discovering, booking, and reviewing travel packages.
 
-# Some UI Preview
+---
+
+## 🚀 Tech Stack
+
+### Frontend
+<p align="left">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React">
+  <img src="https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap">
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript">
+  <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
+</p>
+
+### Backend & Database
+<p align="left">
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js">
+  <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express.js">
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB">
+  <img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white" alt="JWT">
+</p>
+
+---
+
+## 🏗️ Architecture Overview
+
+![Project Architecture](./architecture.png)
+
+The application follows a modern **Decoupled Architecture**:
+- **Frontend**: A React Single Page Application (SPA) serving as the interactive client.
+- **Backend**: A Node.js/Express RESTful API handling business logic and authentication.
+- **Database**: A cloud-hosted MongoDB Atlas instance for persistent storage.
+- **DevOps**: Fully automated CI/CD pipeline integrated with GitHub and Render.
+
+---
+
+## ✨ New Features
+
+### 🌙 Dynamic Dark Mode
+Experience the beauty of Ethiopia in any lighting. We've implemented a global **Dark Mode** toggle using React Context and CSS Variables. Your preference is automatically saved to your local storage.
+
+### 🛡️ Production-Ready Security
+- **JWT Authentication**: Secure user sessions with JSON Web Tokens.
+- **Bcrypt Hashing**: Industry-standard password encryption.
+- **CORS Protection**: Secure cross-origin communication between the frontend and backend.
+
+---
+
+## 📸 UI Preview
 
 **Signin/signup page**
 <p align="center">
@@ -35,8 +85,9 @@ Welcome to the Tour ET. App - a state-of-the-art tour and travel  interactive an
 
 **Review page**
 ###### Authenticated user can give review/comment, rate the package, like/dislike other's review
+<p align="center">
 <img src="https://github.com/bemnet16/Tour_ET--MERN--/blob/UI-Preview/screenshots/Screenshot%20(601).png" alt="Course Page" height="auto" width="500" />
-
+</p>
 
 **Book page**
 ###### Customers check out payment, choose hotel, and room
@@ -55,8 +106,9 @@ Welcome to the Tour ET. App - a state-of-the-art tour and travel  interactive an
 
 **Contact page**
 ###### Customers can reach us 
+<p align="center">
 <img src="https://github.com/bemnet16/Tour_ET--MERN--/blob/UI-Preview/screenshots/Screenshot%20(608).png" alt="Course Page" height="auto" width="500" />
-
+</p>
 
 **About page**
 ###### users can know about us
@@ -65,49 +117,40 @@ Welcome to the Tour ET. App - a state-of-the-art tour and travel  interactive an
   <img src="https://github.com/bemnet16/Tour_ET--MERN--/blob/UI-Preview/screenshots/Screenshot%20(610).png" alt="Course Page" height="auto" width="500" />
 </p>
 
+---
 
-
-
-## Key Features
-
-- **Diverse Travel Packages**: Explore a variety of packages including city tours, group travels, adventure experiences, and historical journeys.
-- **Interactive Google Maps Integration**: Navigate through different locales with integrated Google Maps, enhancing the exploration of cities and historical sites.
-- **User Reviews**: Engage with community feedback through user reviews, helping travelers make informed decisions.
-- **Responsive and Intuitive Design**: Crafted with Bootstrap for a user-friendly experience across all devices.
-
-## Technologies Used
-
-### Frontend
-
-**Core Technologies:**
-- React: A JavaScript library for building user interfaces.
-- Bootstrap: For responsive design and UI components.
-
-**Maps and Navigation:**
-- Google Maps API: For interactive mapping and geographical features.
-
-### Backend
-
-**Main Technologies (MERN Stack):**
-- MongoDB: NoSQL database for storing application data.
-- Express.js: Web application framework for Node.js.
-- React: Frontend JavaScript library.
-- Node.js: JavaScript runtime for executing server-side JavaScript.
-
-### Security and Authentication
-- JWT (JSON Web Tokens) for secure authentication.
-- bcrypt.js for password hashing and security measures.
-
-## Getting Started
+## 🛠️ Getting Started
 
 ### Prerequisites
+- Node.js (v16+)
+- npm or yarn
+- MongoDB Atlas Account
 
-- npm
-  ```sh
-  npm install npm@latest -g
+### Installation
+1. Clone the repository
+   ```sh
+   git clone https://github.com/Samarssj/Tour-ET.git
+   ```
+2. Install dependencies for both Frontend and Backend
+   ```sh
+   cd backend && npm install
+   cd ../frontend && npm install
+   ```
+3. Set up your `.env` variables
+4. Start the development server
+   ```sh
+   # In backend
+   npm start
+   # In frontend
+   npm start
+   ```
 
-**Integrations:**
+---
 
-- Other third-party services as required by the application.
+## 📄 License
+Distributed under the MIT License. See `LICENSE` for more information.
 
-
+---
+<p align="center">
+  Made with ❤️ for Ethiopia
+</p>
