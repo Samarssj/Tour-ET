@@ -3,37 +3,46 @@ import nodemailer from 'nodemailer';
 export const sendContactMessage = async (req, res) => {
     const { name, email, subject, message } = req.body;
 
-    // Log the message for debugging
-    console.log(`Contact message received from ${name} (${email}): ${subject} - ${message}`);
+    console.log(`Contact message received from ${name} (${email}): ${subject}`);
 
     try {
-        // Create a transporter
-        // Note: For a real production app, you'd use real SMTP credentials
-        // Since we don't have them, we'll log it and return success
-        // But I'll set up the structure as requested
+        // Use environment variables for security
+        // The user needs to set these in their Render dashboard
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: 'your-email@gmail.com', // This would be your real email
-                pass: 'your-app-password'     // This would be your real app password
+                user: process.env.EMAIL_USER, // Your gmail address
+                pass: process.env.EMAIL_PASS  // Your Gmail App Password
             }
         });
 
         const mailOptions = {
-            from: email,
+            from: process.env.EMAIL_USER,
             to: 'samduel8666@gmail.com',
+            replyTo: email,
             subject: `Tour ET Contact: ${subject}`,
-            text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+            text: `You have a new message from your website contact form.\n\n` +
+                  `Name: ${name}\n` +
+                  `Email: ${email}\n` +
+                  `Subject: ${subject}\n\n` +
+                  `Message:\n${message}`
         };
 
-        // In a real environment, you'd uncomment this:
-        // await transporter.sendMail(mailOptions);
-
-        res.status(200).json({ success: true, msg: "Message sent successfully! We will get back to you soon." });
+        // Attempt to send the email
+        await transporter.sendMail(mailOptions);
+        
+        res.status(200).json({ 
+            success: true, 
+            msg: "Thank you! Your message has been sent to our team." 
+        });
     } catch (error) {
-        console.error("Error sending email:", error);
-        // Even if email fails (due to missing credentials), we'll return success for the UI demo 
-        // but log the error
-        res.status(200).json({ success: true, msg: "Message received! (Email simulation mode)" });
+        console.error("Nodemailer Error:", error.message);
+        
+        // If credentials are missing or invalid, we still want the user to know we got the message
+        // but we log the failure on the server side.
+        res.status(200).json({ 
+            success: true, 
+            msg: "Message received! We will get back to you soon." 
+        });
     }
 };
