@@ -11,6 +11,7 @@ import commentRouter from "./routes/commentRouter.js";
 import bookingRouter from "./routes/bookingRouter.js";
 import roomRouter from "./routes/roomRouter.js";
 import wishlistRouter from "./routes/wishlistRouter.js";
+import contactRouter from "./routes/contactRouter.js";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/wishlist", wishlistRouter);
 app.use("/api/hotel", hotelRouter);
 app.use("/api/room", roomRouter);
 app.use("/api/booking", bookingRouter);
+app.use("/api/contact", contactRouter);
 
 mongoose.set("strictQuery", false);
 async function connectToDb() {
