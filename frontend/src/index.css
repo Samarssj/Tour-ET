@@ -371,3 +371,41 @@ body.dark-mode .display-3 {
 body.dark-mode .lead {
   color: var(--text-secondary) !important;
 }
+
+/* Booking Success Modal Styles */
+.modal-overlay {
+  z-index: 2000 !important;
+}
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.bg-gradient-to-t {
+  background: linear-gradient(to top, var(--tw-gradient-stops));
+}
+
+.from-black {
+  --tw-gradient-from: #000;
+  --tw-gradient-to: rgb(0 0 0 / 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.vh-75 {
+  height: 75vh !important;
+}
+
+.mt-n5 {
+  margin-top: -3rem !important;
+}
+
+.max-vh-90 {
+  max-height: 90vh !important;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}

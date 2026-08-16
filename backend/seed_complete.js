@@ -124,19 +124,28 @@ async function seed() {
             {
                 hotel: hotel._id,
                 roomNumber: 101,
-                type: "Standard Double",
-                description: "Spacious room with a double bed and mountain view.",
-                images: ["https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=800&q=80"],
-                price: 1200,
+                type: "Single Room",
+                description: "Cozy single room perfect for solo travelers.",
+                images: ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80"],
+                price: 800,
                 taken: false
             },
             {
                 hotel: hotel._id,
                 roomNumber: 202,
+                type: "Double Room",
+                description: "Spacious room with a double bed and mountain view.",
+                images: ["https://images.unsplash.com/photo-1611892440504-42a792e24d32?auto=format&fit=crop&w=800&q=80"],
+                price: 1500,
+                taken: false
+            },
+            {
+                hotel: hotel._id,
+                roomNumber: 303,
                 type: "Luxury Suite",
                 description: "Premium suite with a private balcony and luxury amenities.",
                 images: ["https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80"],
-                price: 2500,
+                price: 3000,
                 taken: false
             }
         );

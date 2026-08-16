@@ -88,26 +88,29 @@ function PackageDetail() {
   }
 
   const descData = site.description?.[0] || {};
-  const mainText = descData.main?.[0] || "";
+  const mainText = descData.main?.[0] || descData.content || "";
   const included = descData.included || [];
   const policy = descData.policy?.[0] || "Standard cancellation policy applies.";
+  
+  const fallbackImage = "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80";
+  const heroImage = site.image && site.image[0] ? site.image[0] : fallbackImage;
 
   return (
     <div className="main-content-wrapper pb-5">
       {/* Hero Section */}
-      <div className="position-relative vh-75 overflow-hidden">
+      <div className="position-relative vh-75 overflow-hidden bg-dark">
         <motion.img 
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.5 }}
-          src={site.image && site.image[0] ? site.image[0] : "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80"} 
-          className="w-100 h-100 object-fit-cover"
+          src={heroImage} 
+          className="w-100 h-100 object-fit-cover opacity-75"
           alt={site.name} 
           onError={(e) => {
-            e.target.src = "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80";
+            e.target.src = fallbackImage;
           }}
         />
-        <div className="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-40 d-flex align-items-end">
+        <div className="position-absolute top-0 start-0 w-100 h-100 bg-gradient-to-t from-black via-transparent to-transparent d-flex align-items-end">
           <div className="container pb-5">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
@@ -115,21 +118,21 @@ function PackageDetail() {
               className="text-white"
             >
               <div className="d-flex align-items-center gap-2 mb-3">
-                <span className="badge bg-primary px-3 py-2 rounded-pill">Featured Tour</span>
+                <span className="badge bg-primary px-3 py-2 rounded-pill shadow">Featured Tour</span>
                 <div className="d-flex align-items-center gap-1 text-warning">
-                  <Star size={16} fill="currentColor" />
-                  <span className="fw-bold">{site.rating || 4.8}</span>
+                  <Star size={18} fill="currentColor" />
+                  <span className="fw-bold text-white">{site.rating || 4.8}</span>
                 </div>
               </div>
-              <h1 className="display-3 fw-bold mb-3 text-white">{site.name}</h1>
-              <div className="d-flex align-items-center gap-4 text-white-50">
-                <div className="d-flex align-items-center gap-2">
-                  <MapPin size={20} className="text-white" />
-                  <span className="text-white">{site.location}</span>
+              <h1 className="display-3 fw-bold mb-3 text-white text-shadow">{site.name}</h1>
+              <div className="d-flex align-items-center gap-4">
+                <div className="d-flex align-items-center gap-2 text-white">
+                  <MapPin size={20} className="text-primary" />
+                  <span className="fw-medium">{site.location}</span>
                 </div>
-                <div className="d-flex align-items-center gap-2">
-                  <Activity size={20} className="text-white" />
-                  <span className="text-white">{site.to_do_type || "Adventure"}</span>
+                <div className="d-flex align-items-center gap-2 text-white">
+                  <Activity size={20} className="text-primary" />
+                  <span className="fw-medium">{site.to_do_type || "Adventure"}</span>
                 </div>
               </div>
             </motion.div>
