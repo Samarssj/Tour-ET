@@ -1,379 +1,289 @@
-import React, { useState, useEffect, useContext } from "react";
-import { FaStar } from "react-icons/fa";
-import { AiOutlineShoppingCart } from "react-icons/ai";
-import { GiSupersonicBullet } from "react-icons/gi";
-import { BsCheck2Square } from "react-icons/bs";
-import { Link, useParams } from "react-router-dom";
-import Review from "../Component/Review";
-import { useAuthContext } from "../customHook/useAuthContext";
-import { CartContext } from "../context/cartContex";
-import useFetch from "../customHook/useFetch";
+import React, { useEffect, useState, useContext } from "react";
+import { useHistory, useParams, Link } from "react-router-dom";
+import useFetch from "../customHook/useFetch.js";
+import { useAuthContext } from "../customHook/useAuthContext.js";
+import { CartContext } from "../context/cartContex.js";
+import Review from "../Component/Review.jsx";
+import { motion } from "framer-motion";
+import { 
+  MapPin, Clock, Users, Calendar, 
+  ShoppingCart, CreditCard, Star, 
+  ChevronRight, CheckCircle2, AlertCircle,
+  Activity
+} from "lucide-react";
 
 function PackageDetail() {
   const { id } = useParams();
+  const history = useHistory();
+  const { user } = useAuthContext();
+  const { state, dispatch } = useContext(CartContext);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [itemAdded, setItemAdded] = useState(false);
+
   const { data: site } = useFetch(
     `${process.env.REACT_APP_BACKEND_URL}/package/${id}`
   );
-  const [itemAdded, setItemAdded] = useState(false);
-  const { state, dispatch } = useContext(CartContext);
-  const { user } = useAuthContext();
 
-  const addToCart = async (item) => {
-    setItemAdded(true);
+  useEffect(() => {
+    if (site && state) {
+      const isItemInCart = state.find((idx) => idx.packages === id);
+      setItemAdded(!!isItemInCart);
+    }
+  }, [site, state, id]);
 
+  const addToCart = async () => {
     if (!user) {
+      setError("Please login to add items to your cart");
+      setTimeout(() => history.push("/login"), 2000);
       return;
     }
 
-    const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/wishlist
-      `,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(item),
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/wishlist`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user: user.detail._id,
+            packages: site._id,
+            name: site.name,
+            price: site.pricePerAdult,
+            photo: site.image[0],
+          }),
+        }
+      );
+      const result = await response.json();
+      if (response.ok) {
+        dispatch({ type: "ADD", item: result.data });
+        setItemAdded(true);
+        setSuccess("Package added to cart successfully!");
+        setTimeout(() => setSuccess(""), 3000);
+      } else {
+        setError("Failed to add to cart. Please try again.");
       }
-    );
-    const result = await response.json();
-    if (response.ok) {
-      dispatch({ type: "ADD", item: result.data });
+    } catch (err) {
+      setError("Network error. Please try again.");
     }
   };
 
-  const findId = () => {
-    const va = state.find((idx) => idx.packages === id);
-    va ? setItemAdded(true) : setItemAdded(false);
+  const handleBookClick = (e) => {
+    if (!user) {
+      e.preventDefault();
+      setError("Please login to book a tour");
+      setTimeout(() => history.push("/login"), 2000);
+    }
   };
-  useEffect(() => {
-    findId();
-  }, []);
 
   if (!site) {
-    return <p className="text-center py-5">Loading package details...</p>;
+    return (
+      <div className="main-content-wrapper d-flex align-items-center justify-content-center">
+        <div className="spinner-border text-primary" role="status"></div>
+      </div>
+    );
   }
 
-  const stars = Array(Math.round(site?.rating || 0)).fill(0);
-  const description = site?.description?.[0] || {};
-  const included = description.included || [];
-  const notIncluded = description.notIncluded || [];
-  const expect = description.expect || [];
-  const additionalInfo = description.additionalInfo || [];
-  const policy = description.policy || [];
-  const mainText = description.main?.[0] || "";
+  const descData = site.description?.[0] || {};
+  const mainText = descData.main?.[0] || "";
+  const included = descData.included || [];
+  const policy = descData.policy?.[0] || "Standard cancellation policy applies.";
 
   return (
-    <section className="bg-light">
-      <div className="container-md">
-        <div className=" row m-0 mt-2">
-          <div
-            id="carouselExampleControls"
-            className="col-12 col-md-6 carousel slide"
-            data-bs-ride="carousel"
-          >
-            <div className="carousel-inner">
-              {(site.image || []).map((im, index) => {
-                if (index === 0) {
-                  return (
-                    <div className="image carousel-item active" key={index}>
-                      <img
-                        src={im}
-                        alt="Package img"
-                        className="d-block img-fluid w-100"
-                      />
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div className="image carousel-item" key={index}>
-                      <img
-                        src={im}
-                        alt="Package img"
-                        className="d-block img-fluid w-100"
-                      />
-                    </div>
-                  );
-                }
-              })}
-            </div>
-
-            <button
-              className="carousel-control-prev"
-              type="button"
-              data-bs-target="#carouselExampleControls"
-              data-bs-slide="prev"
+    <div className="main-content-wrapper pb-5">
+      {/* Hero Section */}
+      <div className="position-relative vh-75 overflow-hidden">
+        <motion.img 
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5 }}
+          src={site.image[0]} 
+          className="w-100 h-100 object-fit-cover"
+          alt={site.name} 
+        />
+        <div className="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-40 d-flex align-items-end">
+          <div className="container pb-5">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-white"
             >
-              <span
-                className="carousel-control-prev-icon"
-                aria-hidden="true"
-              ></span>
-              <span className="visually-hidden">Previous</span>
-            </button>
-            <button
-              className="carousel-control-next"
-              type="button"
-              data-bs-target="#carouselExampleControls"
-              data-bs-slide="next"
-            >
-              <span
-                className="carousel-control-next-icon"
-                aria-hidden="true"
-              ></span>
-              <span className="visually-hidden">Next</span>
-            </button>
-          </div>
-
-          <div className="pkg-detail col-12 col-md-6 ">
-            <h1 className="display-5 fw-bold d-inline">{site.name}</h1>
-            <h6 className="text-muted">/{site.location}</h6>
-            {<p className="text-start py-2 ">{mainText}</p>}
-            <div className="text-start">
-              {stars.map((_, index) => {
-                return <FaStar key={index} />;
-              })}
-            </div>
-            <div className="d-flex justify-content-between align-items-center">
-              <h4 className="lead fs-4 rounded-pill py-4 text-start">
-                {site.pricePerAdult}.00 Birr Per adult
-              </h4>
-              <div
-                style={{ height: "50px" }}
-                className="d-flex justify-content-end gap-2"
-              >
-                {!itemAdded && (
-                  <button
-                    className="btn btn-primary btn-md"
-                    onClick={() => {
-                      addToCart({
-                        user: user.detail._id,
-                        packages: site._id,
-                        name: site.name,
-                        price: site.pricePerAdult,
-                        photo: site.image[0],
-                      });
-                    }}
-                  >
-                    <AiOutlineShoppingCart /> Add to Cart
-                  </button>
-                )}
-                {itemAdded && (
-                  <button className="btn btn-primary btn-md">Added</button>
-                )}
-                <button className="btn btn-info btn-lg ">
-                  <Link
-                    className="text-decoration-none text-light"
-                    to={`/book/${site._id}`}
-                  >
-                    <BsCheck2Square /> Book
-                  </Link>
-                </button>
+              <div className="d-flex align-items-center gap-2 mb-3">
+                <span className="badge bg-primary px-3 py-2 rounded-pill">Featured Tour</span>
+                <div className="d-flex align-items-center gap-1 text-warning">
+                  <Star size={16} fill="currentColor" />
+                  <span className="fw-bold">{site.rating || 4.8}</span>
+                </div>
               </div>
-            </div>
+              <h1 className="display-3 fw-bold mb-3 text-white">{site.name}</h1>
+              <div className="d-flex align-items-center gap-4 text-white-50">
+                <div className="d-flex align-items-center gap-2">
+                  <MapPin size={20} className="text-white" />
+                  <span className="text-white">{site.location}</span>
+                </div>
+                <div className="d-flex align-items-center gap-2">
+                  <Activity size={20} className="text-white" />
+                  <span className="text-white">{site.to_do_type || "Adventure"}</span>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
-
-        <hr />
-        <div className="row align-items-center">
-          <div className="map col-12 col-md-6 d-flex align-self-start mx-auto">
-            <iframe
-              src={site.map}
-              title="site"
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="p-0 m-auto mt-2 rounded border border-light"
-              style={{ height: "400px", width: "400px" }}
-            ></iframe>
-          </div>
-
-          <div
-            className="col-12 col-md-6 accordion accordion-flush text-start align-self-start mt-4"
-            id="accordionFlushExample"
-          >
-            <h2 className="text-start fs-5 py-2">
-              Type of activity{" "}
-              <span className="text-muted"> {site.to_do_type}</span>{" "}
-            </h2>
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="flush-headingOne">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#flush-collapseOne"
-                  aria-expanded="false"
-                  aria-controls="flush-collapseOne"
-                >
-                  What's included
-                </button>
-              </h2>
-              <div
-                id="flush-collapseOne"
-                className="accordion-collapse collapse"
-                aria-labelledby="flush-headingOne"
-                data-bs-parent="#accordionFlushExample"
-              >
-                <div className="accordion-body">
-                  {included.length > 0 ? (
-                    included.map((info, index) => {
-                      return (
-                        <p key={index}>
-                          <GiSupersonicBullet /> {info}
-                        </p>
-                      );
-                    })
-                  ) : (
-                    <p className="text-muted">No information provided.</p>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="flush-headingTwo">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#flush-collapseTwo"
-                  aria-expanded="false"
-                  aria-controls="flush-collapseTwo"
-                >
-                  What's not included
-                </button>
-              </h2>
-              <div
-                id="flush-collapseTwo"
-                className="accordion-collapse collapse"
-                aria-labelledby="flush-headingTwo"
-                data-bs-parent="#accordionFlushExample"
-              >
-                <div className="accordion-body">
-                  {notIncluded.length > 0 ? (
-                    notIncluded.map((info, index) => {
-                      return (
-                        <p key={index}>
-                          <GiSupersonicBullet /> {info}{" "}
-                        </p>
-                      );
-                    })
-                  ) : (
-                    <p className="text-muted">No information provided.</p>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="flush-headingThree">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#flush-collapseThree"
-                  aria-expanded="false"
-                  aria-controls="flush-collapseThree"
-                >
-                  What to expect
-                </button>
-              </h2>
-              <div
-                id="flush-collapseThree"
-                className="accordion-collapse collapse"
-                aria-labelledby="flush-headingThree"
-                data-bs-parent="#accordionFlushExample"
-              >
-                <div className="accordion-body">
-                  {expect.length > 0 ? (
-                    expect.map((ex, i) => {
-                      return (
-                        <React.Fragment key={i}>
-                          {ex.map((e, idx) => {
-                            return <p key={idx}>{e} </p>;
-                          })}
-                          <hr />
-                        </React.Fragment>
-                      );
-                    })
-                  ) : (
-                    <p className="text-muted">No information provided.</p>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="flush-headingFour">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#flush-collapseFour"
-                  aria-expanded="false"
-                  aria-controls="flush-collapseFour"
-                >
-                  Additional information
-                </button>
-              </h2>
-              <div
-                id="flush-collapseFour"
-                className="accordion-collapse collapse"
-                aria-labelledby="flush-headingFour"
-                data-bs-parent="#accordionFlushExample"
-              >
-                <div className="accordion-body">
-                  {additionalInfo.length > 0 ? (
-                    additionalInfo.map((info, index) => {
-                      return (
-                        <p key={index}>
-                          <GiSupersonicBullet /> {info}{" "}
-                        </p>
-                      );
-                    })
-                  ) : (
-                    <p className="text-muted">No information provided.</p>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="flush-headingFive">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#flush-collapseFive"
-                  aria-expanded="false"
-                  aria-controls="flush-collapseFive"
-                >
-                  Cancellation policy
-                </button>
-              </h2>
-              <div
-                id="flush-collapseFive"
-                className="accordion-collapse collapse"
-                aria-labelledby="flush-headingFive"
-                data-bs-parent="#accordionFlushExample"
-              >
-                <div className="accordion-body">{policy[0] || "No policy provided."} </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {user && (
-          <div className="what pt-5  ">
-            <div className="text-center w-50">
-              <Link
-                to={`/review/${site._id}`}
-                className="btn btn-outline-secondary "
-              >
-                Write a review
-              </Link>
-            </div>
-            <Review unique={site._id} />
-          </div>
-        )}
       </div>
-    </section>
+
+      <div className="container mt-n5 position-relative z-index-1">
+        <div className="row g-4">
+          {/* Main Content */}
+          <div className="col-lg-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="card border-0 shadow-lg p-4 p-md-5"
+            >
+              {error && (
+                <div className="alert alert-danger d-flex align-items-center gap-2 mb-4">
+                  <AlertCircle size={20} />
+                  <span>{error}</span>
+                </div>
+              )}
+              {success && (
+                <div className="alert alert-success d-flex align-items-center gap-2 mb-4">
+                  <CheckCircle2 size={20} />
+                  <span>{success}</span>
+                </div>
+              )}
+
+              <div className="mb-5">
+                <h2 className="h3 fw-bold mb-4">About this experience</h2>
+                <p className="lead text-secondary mb-4">{mainText}</p>
+                <div className="row g-4 mt-2">
+                  <div className="col-sm-6">
+                    <div className="d-flex align-items-center gap-3 p-3 bg-light rounded-4">
+                      <div className="bg-primary text-white p-2 rounded-3">
+                        <Users size={20} />
+                      </div>
+                      <div>
+                        <div className="small text-muted">Group Size</div>
+                        <div className="fw-bold">Up to 12 people</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-sm-6">
+                    <div className="d-flex align-items-center gap-3 p-3 bg-light rounded-4">
+                      <div className="bg-primary text-white p-2 rounded-3">
+                        <Calendar size={20} />
+                      </div>
+                      <div>
+                        <div className="small text-muted">Availability</div>
+                        <div className="fw-bold">All year round</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mb-5">
+                <h2 className="h3 fw-bold mb-4">What's included</h2>
+                <div className="row g-3">
+                  {included.length > 0 ? included.map((item, i) => (
+                    <div key={i} className="col-md-6">
+                      <div className="d-flex align-items-center gap-2">
+                        <CheckCircle2 className="text-primary" size={20} />
+                        <span className="text-secondary">{item}</span>
+                      </div>
+                    </div>
+                  )) : (
+                    <div className="col-12 text-muted">Information about inclusions will be provided during booking.</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="mb-5">
+                <h2 className="h3 fw-bold mb-4">Cancellation Policy</h2>
+                <div className="p-4 bg-light rounded-4 text-secondary">
+                  {policy}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Reviews Section */}
+            <div className="mt-5">
+              <div className="d-flex align-items-center justify-content-between mb-4">
+                <h2 className="h3 fw-bold mb-0">Guest Reviews</h2>
+                {user && (
+                  <Link to={`/review/${site._id}`} className="btn btn-outline-primary rounded-pill">
+                    Write a Review
+                  </Link>
+                )}
+              </div>
+              <Review unique={site._id} />
+            </div>
+          </div>
+
+          {/* Sidebar Booking Card */}
+          <div className="col-lg-4">
+            <div className="sticky-top" style={{ top: '100px' }}>
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="card border-0 shadow-lg overflow-hidden"
+              >
+                <div className="card-body p-4 p-xl-5">
+                  <div className="mb-4">
+                    <span className="text-muted small d-block mb-1">Price per adult</span>
+                    <div className="d-flex align-items-baseline gap-2">
+                      <h3 className="display-6 fw-bold text-primary mb-0">{site.pricePerAdult}</h3>
+                      <span className="h5 text-muted mb-0">Birr</span>
+                    </div>
+                  </div>
+
+                  <div className="d-grid gap-3">
+                    <button 
+                      onClick={addToCart}
+                      disabled={itemAdded}
+                      className={`btn ${itemAdded ? 'btn-success' : 'btn-outline-primary'} btn-lg rounded-pill d-flex align-items-center justify-content-center gap-2 py-3`}
+                    >
+                      {itemAdded ? <CheckCircle2 size={20} /> : <ShoppingCart size={20} />}
+                      <span>{itemAdded ? 'In Cart' : 'Add to Cart'}</span>
+                    </button>
+                    <Link 
+                      to={`/book/${site._id}`} 
+                      onClick={handleBookClick}
+                      className="btn btn-primary btn-lg rounded-pill d-flex align-items-center justify-content-center gap-2 py-3"
+                    >
+                      <CreditCard size={20} />
+                      <span>Book Now</span>
+                    </Link>
+                  </div>
+
+                  <div className="mt-4 pt-4 border-top">
+                    <div className="d-flex align-items-center gap-3 text-secondary small">
+                      <CheckCircle2 className="text-success" size={16} />
+                      <span>Instant confirmation</span>
+                    </div>
+                    <div className="d-flex align-items-center gap-3 text-secondary small mt-2">
+                      <CheckCircle2 className="text-success" size={16} />
+                      <span>Verified local operators</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <div className="card border-0 shadow-sm mt-4 p-4 bg-light rounded-4">
+                <h4 className="h6 fw-bold mb-3">Need Help?</h4>
+                <p className="small text-muted mb-0">Our travel experts are available 24/7 to assist you with your booking.</p>
+                <a href="tel:+251911223344" className="btn btn-link text-primary p-0 mt-2 fw-bold text-decoration-none">
+                  Contact Support <ChevronRight size={16} />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -1,19 +1,27 @@
-import React from "react";
-import { useState } from "react";
-import { FaUserCircle } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { FaUserCircle, FaPhone, FaCalendarAlt, FaCalculator, FaCheckCircle } from "react-icons/fa";
 import { useHistory, useParams } from "react-router-dom";
 import { useAuthContext } from "../customHook/useAuthContext.js";
-import { context } from "../context/context.js";
 import Hotel from "../Component/Book/Hotel.jsx";
 import useFetch from "../customHook/useFetch.js";
+import { motion, AnimatePresence } from "framer-motion";
+import { AlertCircle, CreditCard, Wallet } from "lucide-react";
+
 function Book() {
   const history = useHistory();
   const { id } = useParams();
-  const [book, setBook] = useState({});
+  const [book, setBook] = useState({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    payment: ""
+  });
   const [numTour, setNumTour] = useState(1);
   const [roomSelect, setRoomSelect] = useState(false);
   const [totalPrice, setTotal] = useState(0);
+  const [error, setError] = useState("");
   const { user } = useAuthContext();
+
   const { data: hotels } = useFetch(
     `${process.env.REACT_APP_BACKEND_URL}/package/${id}/hotel`
   );
@@ -21,8 +29,29 @@ function Book() {
     `${process.env.REACT_APP_BACKEND_URL}/package/${id}`
   );
 
+  useEffect(() => {
+    if (!user) {
+      history.push("/login");
+    }
+  }, [user, history]);
+
   const handleSumbit = async (e) => {
     e.preventDefault();
+    if (!user) {
+      setError("Please login to continue");
+      return;
+    }
+
+    if (!book.firstName || !book.lastName || !book.phone || !book.payment) {
+      setError("Please fill in all details and select a payment method");
+      return;
+    }
+
+    if (!roomSelect) {
+      setError("Please select a hotel room first");
+      return;
+    }
+
     const { hotelId, roomId, payment } = book;
     const body = {
       hotel: hotelId,
@@ -32,287 +61,263 @@ function Book() {
       name: pkg.name,
       numberOfPeople: numTour,
       price: totalPrice,
+      firstName: book.firstName,
+      lastName: book.lastName,
+      phone: book.phone
     };
-    await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/booking/
-      `,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/booking`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+      if (response.ok) {
+        history.push("/");
+      } else {
+        const result = await response.json();
+        setError(result.msg || "Booking failed. Please try again.");
       }
-    );
-    history.go(-1);
+    } catch (err) {
+      setError("Network error. Please try again.");
+    }
   };
+
   const calPrice = async () => {
+    if (!user) {
+      setError("Please login to calculate price");
+      return;
+    }
+
+    if (!book.firstName || !book.lastName || !book.phone) {
+      setError("Please provide your name and phone number before calculating the price.");
+      return;
+    }
+
+    setError("");
     const body = {
       pricePerAdult: pkg.pricePerAdult,
       noOfPeople: parseInt(numTour),
     };
-    console.log(pkg.pricePerAdult, parseInt(numTour));
-    const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/booking/price/
-    `,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/booking/price`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+      const result = await response.json();
+      if (response.ok) {
+        setTotal(result.data.totalPrice);
+      } else {
+        setError("Failed to calculate price. Please check your inputs.");
       }
-    );
-    const result = await response.json();
-    if (response.ok) {
-      setTotal(result.data.totalPrice);
+    } catch (err) {
+      setError("Network error during price calculation.");
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setBook({ ...book, [name]: value });
-    console.log(book.payment);
   };
 
   if (!pkg) {
-    return <h3>no package for today </h3>;
+    return <div className="main-content-wrapper text-center py-5"><h3>Loading package...</h3></div>;
   }
 
   return (
-    <div
-      className="container-md my-5 d-flex flex-column align-items-start p-5"
-      style={{ marginBottom: "30px" }}
-    >
-      <div className="d-block" style={{ fontSize: "30px" }}>
-        <span className="fw-bold ">{pkg.location}/ </span>
-        <span className="">{pkg.name} </span>
-      </div>
-      <div style={{ width: "40%" }}>
-        <input type="date" name="date" className="form-control w-100" />
-      </div>
-      <div
-        className=""
-        style={{
-          fontSize: "20px",
-          marginTop: "10px ",
-          width: "500px",
-          display: "flex",
-          justifyContent: "start",
-        }}
-      >
-        <label className="me-2" htmlFor="user">
-          <FaUserCircle />
-        </label>
-        <input
-          id="user"
-          type="number"
-          pattern="^\d+$"
-          inputMode="numeric"
-          step="1"
-          min="1"
-          max="99"
-          value={numTour}
-          onChange={(e) => setNumTour(e.target.value)}
-        />
-        <button className="btn btn-secondary ms-5 d-inline" onClick={calPrice}>
-          calculate price
-        </button>
-        <p className="lead d-inline ms-5 fw-bold">
-          Total price : {totalPrice}{" "}
-        </p>
-      </div>
+    <div className="main-content-wrapper py-5">
+      <div className="container-md">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="card border-0 shadow-lg p-4 p-md-5"
+        >
+          <div className="mb-5 border-bottom pb-4">
+            <h1 className="display-6 fw-bold text-primary mb-2">Booking Your Adventure</h1>
+            <p className="lead text-secondary">{pkg.location} / {pkg.name}</p>
+          </div>
 
-      <div className="d-flex  mb-3"></div>
+          {error && (
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="alert alert-danger d-flex align-items-center gap-2"
+            >
+              <AlertCircle size={20} />
+              <span>{error}</span>
+            </motion.div>
+          )}
 
-      <div className="">
-        <form onSubmit={handleSumbit} className="">
-          <input
-            type="text"
-            placeholder="first name"
-            name="firstName"
-            onChange={handleChange}
-            className="form-control p-2 my-4"
-            style={{ width: "60%" }}
-          />
-          <input
-            type="text"
-            placeholder="last name"
-            name="lastName"
-            onChange={handleChange}
-            className="form-control p-2 my-4"
-            style={{ width: "60%" }}
-          />
-          <input
-            type="tel"
-            placeholder="Enter phone number"
-            name="phone"
-            onChange={handleChange}
-            className="form-control p-2 my-4"
-            style={{ width: "60%" }}
-          />
-          <div className="d-flex payment-container">
-            <div className="d-flex  my-5">
-              <div className="d-flex  payment">
-                <input
-                  className="me-2"
-                  type="radio"
-                  name="payment"
-                  value="teleBirr"
-                  id="teleBirr"
-                  hidden={true}
-                  onChange={handleChange}
-                />
-                <label htmlFor="teleBirr">
-                  <div className="img-container">
-                    <img
-                      style={{
-                        width: "60px",
-                        cursor: "pointer",
-                      }}
-                      src="https://is5-ssl.mzstatic.com/image/thumb/Purple112/v4/4c/7e/07/4c7e0740-f225-50ac-3c25-00e7cb488772/AppIcon-1x_U007emarketing-0-5-0-85-220.png/512x512bb.jpg"
-                      alt="telebirr logo"
-                      className="logo-img"
-                    />
-                    <br />
-                    <p
-                      style={{
-                        borderBottom:
-                          book.payment === "teleBirr" ? "3px solid gray" : "",
-                      }}
-                      className=""
-                    >
-                      telebirr
-                    </p>
-                  </div>
-                </label>
+          <form onSubmit={handleSumbit}>
+            <div className="row g-4 mb-5">
+              <div className="col-md-6">
+                <label className="form-label fw-bold small text-uppercase text-muted">Travel Date</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-transparent"><FaCalendarAlt /></span>
+                  <input type="date" name="date" className="form-control" required />
+                </div>
               </div>
-              <div className="d-flex payment">
-                <input
-                  className="me-2"
-                  type="radio"
-                  name="payment"
-                  value="CBEBirr"
-                  id="CBEBirr"
-                  hidden={true}
-                  onChange={handleChange}
-                />
-                <label style={{ cursor: "pointer" }} htmlFor="CBEBirr">
-                  <div className="img-container">
-                    <img
-                      style={{
-                        width: "120px",
-                        cursor: "pointer",
-                      }}
-                      src="
-                        https://play-lh.googleusercontent.com/rcSKabjkP2GfX1_I_VXBfhQIPdn_HPXj5kbkDoL4cu5lpvcqPsGmCqfqxaRrSI9h5_A=w600-h300-pc0xffffff-pd"
-                      alt="telebirr logo"
-                      className="logo-img"
-                    />
-                    <br />
-                    <p
-                      style={{
-                        borderBottom:
-                          book.payment === "CBEBirr" ? "3px solid gray" : "",
-                      }}
-                      className=""
-                    >
-                      CBEbirr
-                    </p>
-                  </div>
-                </label>
-              </div>
-              <div className="d-flex payment">
-                <input
-                  className="me-2"
-                  type="radio"
-                  name="payment"
-                  value="e_birr"
-                  id="e_birr"
-                  hidden={true}
-                  onChange={handleChange}
-                />
-                <label style={{ cursor: "pointer" }} htmlFor="e_birr">
-                  <div className="img-container">
-                    <img
-                      style={{
-                        width: "60px",
-                        cursor: "pointer",
-                      }}
-                      src="https://ebirr.com/wp-content/uploads/2018/08/logooo-002.jpg"
-                      alt="telebirr logo"
-                      className="logo-img"
-                    />
-                    <br />
-                    <p
-                      style={{
-                        borderBottom:
-                          book.payment === "e_birr" ? "3px solid gray" : "",
-                      }}
-                      className=""
-                    >
-                      e birr
-                    </p>
-                  </div>
-                </label>
+              <div className="col-md-6">
+                <label className="form-label fw-bold small text-uppercase text-muted">Number of Travelers</label>
+                <div className="input-group">
+                  <span className="input-group-text bg-transparent"><FaUserCircle /></span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="99"
+                    className="form-control"
+                    value={numTour}
+                    onChange={(e) => setNumTour(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            className="container-md "
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              gap: "50px",
-              overflow: "auto",
-              justifyContent: "center",
-            }}
-          >
-            {!roomSelect && (
-              <div
-                className="d-flex  bg-light gap-5 px-5"
-                style={{
-                  overflow: "auto",
-                  overflowY: "scroll",
-                  justifyContent: "center",
-                  display: "flex",
-                  maxHeight: "90vh",
-                }}
-              >
-                {hotels?.map((hotel, idx) => {
-                  return (
-                    <context.Provider
-                      value={{ book, setBook, setRoomSelect }}
-                      key={idx}
-                    >
-                      <div className="d-flex ">
-                        <Hotel {...hotel} key={id + 2} />
-                      </div>
-                    </context.Provider>
-                  );
-                })}{" "}
+
+            <div className="row g-4 mb-5">
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  name="firstName"
+                  value={book.firstName}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                />
               </div>
-            )}
-            {roomSelect && (
-              <div className="shadow mt-4 " style={{ width: "300px" }}>
-                <img src={book.roomImg} alt="" style={{ width: "300px" }} />
-                <p>{book.roomBody} </p>
-                <p className="fw-bold">{book.roomPrice} birr</p>
-                <button
-                  className="btn btn-outline-primary"
-                  onClick={() => setRoomSelect(false)}
-                >
-                  Choose Another
+              <div className="col-md-4">
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  name="lastName"
+                  value={book.lastName}
+                  onChange={handleChange}
+                  className="form-control"
+                  required
+                />
+              </div>
+              <div className="col-md-4">
+                <div className="input-group">
+                  <span className="input-group-text bg-transparent"><FaPhone /></span>
+                  <input
+                    type="tel"
+                    placeholder="Phone Number"
+                    name="phone"
+                    value={book.phone}
+                    onChange={handleChange}
+                    className="form-control"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-secondary-subtle p-4 rounded-4 mb-5 d-flex align-items-center justify-content-between flex-wrap gap-3">
+              <div className="d-flex align-items-center gap-3">
+                <div className="bg-primary text-white p-3 rounded-circle">
+                  <FaCalculator size={24} />
+                </div>
+                <div>
+                  <h3 className="h5 fw-bold mb-0">Price Calculator</h3>
+                  <p className="text-muted small mb-0">Get the total cost for your group</p>
+                </div>
+              </div>
+              <div className="d-flex align-items-center gap-4">
+                <button type="button" className="btn btn-outline-primary rounded-pill px-4" onClick={calPrice}>
+                  Calculate Total
                 </button>
+                <div className="text-end">
+                  <span className="text-muted small d-block">Estimated Total</span>
+                  <span className="h4 fw-bold text-primary mb-0">{totalPrice} <small className="fw-normal text-muted">Birr</small></span>
+                </div>
               </div>
-            )}
-          </div>
-          <button type="submit" className="mt-4 btn btn-secondary">
-            Reserve Now
-          </button>
-        </form>
+            </div>
+
+            <div className="mb-5">
+              <h3 className="h5 fw-bold mb-4 d-flex align-items-center gap-2">
+                <CreditCard size={20} /> Select Payment Method
+              </h3>
+              <div className="row g-3">
+                {[
+                  { id: 'teleBirr', name: 'telebirr', logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663824498893/nMksZFddCJRXCnpz.jpg' },
+                  { id: 'CBEBirr', name: 'CBEbirr', logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663824498893/LBUVpRLDfrTaIJTx.jpg' },
+                  { id: 'e_birr', name: 'e birr', logo: 'https://files.manuscdn.com/user_upload_by_module/session_file/310519663824498893/BFUyQSwbHUBUayqj.jpg' }
+                ].map((method) => (
+                  <div key={method.id} className="col-4 col-md-2">
+                    <input
+                      type="radio"
+                      name="payment"
+                      value={method.id}
+                      id={method.id}
+                      className="btn-check"
+                      onChange={handleChange}
+                      checked={book.payment === method.id}
+                    />
+                    <label className="btn btn-outline-light border w-100 p-3 rounded-4 d-flex flex-column align-items-center gap-2" htmlFor={method.id}>
+                      <img src={method.logo} alt={method.name} className="img-fluid rounded" style={{ height: '40px', objectFit: 'contain' }} />
+                      <span className="small fw-bold text-dark">{method.name}</span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-5">
+              <h3 className="h5 fw-bold mb-4 d-flex align-items-center gap-2">
+                <Wallet size={20} /> Choose Your Accommodation
+              </h3>
+              <div className="row g-4">
+                {!roomSelect ? (
+                  hotels?.map((hotel, idx) => (
+                    <div className="col-12 col-md-6 col-lg-4" key={idx}>
+                      <Hotel {...hotel} book={book} setBook={setBook} setRoomSelect={setRoomSelect} />
+                    </div>
+                  ))
+                ) : (
+                  <motion.div 
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="col-12 col-md-6"
+                  >
+                    <div className="card border-primary bg-primary-subtle p-3 rounded-4">
+                      <div className="d-flex align-items-center gap-3">
+                        <img src={book.roomImg} alt="Room" className="rounded-3" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                        <div className="flex-grow-1">
+                          <h4 className="h6 fw-bold mb-1">{book.roomBody}</h4>
+                          <p className="text-primary fw-bold mb-2">{book.roomPrice} Birr</p>
+                          <button type="button" className="btn btn-sm btn-outline-primary rounded-pill" onClick={() => setRoomSelect(false)}>
+                            Change Room
+                          </button>
+                        </div>
+                        <FaCheckCircle className="text-primary" size={24} />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            </div>
+
+            <div className="text-center pt-4">
+              <button type="submit" className="btn btn-primary btn-lg rounded-pill px-5 py-3">
+                Confirm Reservation Now
+              </button>
+            </div>
+          </form>
+        </motion.div>
       </div>
     </div>
   );
