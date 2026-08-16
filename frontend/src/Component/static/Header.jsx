@@ -1,195 +1,150 @@
-import React, { useContext } from "react";
-import { FaSun, FaMoon } from "react-icons/fa";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useHistory, useLocation } from "react-router-dom";
 import { ThemeContext } from "../../context/ThemeContext";
-import logo from "../../assets/lo.png";
-import { Link, useHistory } from "react-router-dom";
-import { FaLuggageCart } from "react-icons/fa";
-import { Nav, Navbar, Container } from "react-bootstrap";
 import { CartContext } from "../../context/cartContex";
 import { useAuthContext } from "../../customHook/useAuthContext";
-import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { motion, AnimatePresence } from "framer-motion";
+import { Sun, Moon, ShoppingBag, LogOut, User, Menu, X, MapPin } from "lucide-react";
+import logo from "../../assets/lo.png";
 
 const Header = () => {
   const history = useHistory();
   const { pathname } = useLocation();
-  const { state, dispatch: dis2 } = useContext(CartContext);
-  const { user, dispatch: dis1 } = useAuthContext();
+  const { state: cartState, dispatch: cartDispatch } = useContext(CartContext);
+  const { user, dispatch: authDispatch } = useAuthContext();
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const handleLogout = () => {
-    dis1({ type: "LOGOUT" });
+    authDispatch({ type: "LOGOUT" });
     localStorage.removeItem("user");
+    cartDispatch({ type: "SET", item: [] });
     history.push("/");
-    dis2({ type: "SET", item: [] });
   };
 
-  const activeNav =
-    pathname === "/"
-      ? "home"
-      : pathname === "/Ethiopia"
-      ? "ethiopia"
-      : pathname === "/about"
-      ? "about"
-      : pathname === "/contact"
-      ? "contact"
-      : "package";
-
-  const handleCart = () => {
-    if (user) {
-      history.push("/cart");
-    } else {
-      history.push("/register");
-    }
-  };
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Packages", path: "/package" },
+    { name: "Ethiopia", path: "/Ethiopia" },
+    { name: "About", path: "/about" },
+    { name: "Contact", path: "/contact" },
+  ];
 
   return (
-    <Navbar className="bg-dark" expand="lg">
-      <Container>
-        <Navbar.Brand href="#">
-          <img
+    <nav className={`navbar navbar-expand-lg fixed-top ${isScrolled ? 'glass shadow-sm py-2' : 'py-3'}`}>
+      <div className="container">
+        <Link className="navbar-brand d-flex align-items-center" to="/">
+          <motion.img
             src={logo}
-            alt="logo img"
-            className="logo img-fluid mx-2"
-            style={{ height: "50px", borderRadius: "50%" }}
+            alt="logo"
+            className="rounded-circle me-2"
+            style={{ height: "40px", width: "40px", objectFit: "cover" }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
           />
-          <span className="bg-none text-warning text-uppercase fs-3">
-            Tour ET.
+          <span className="fw-bold fs-4">
+            Tour<span className="text-primary">ET</span>
           </span>
-        </Navbar.Brand>
-        <Navbar.Toggle className="bg-light" aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto me-auto gap-2">
-            <div>
-              <Link
-                style={{
-                  textDecoration: "none",
-                  marginLeft: "20px",
-                  color: activeNav === "home" ? "orange" : "rgb(244,244,244)",
-                  borderBottom: activeNav === "home" ? "1px solid orange" : "",
-                }}
-                to="/"
-              >
-                Home
-              </Link>
-            </div>
-            <div>
-              <Link
-                style={{
-                  textDecoration: "none",
-                  marginLeft: "20px",
-                  color:
-                    activeNav === "package" ? "orange" : "rgb(244,244,244)",
-                  borderBottom:
-                    activeNav === "package" ? "1px solid orange" : "",
-                }}
-                to="/package"
-              >
-                Package
-              </Link>
-            </div>
-            <div>
-              <Link
-                style={{
-                  textDecoration: "none",
-                  marginLeft: "20px",
-                  color:
-                    activeNav === "contact" ? "orange" : "rgb(244,244,244)",
-                  borderBottom:
-                    activeNav === "contact" ? "1px solid orange" : "",
-                }}
-                to="/contact"
-              >
-                Contact
-              </Link>
-            </div>
-            <div>
-              <Link
-                style={{
-                  textDecoration: "none",
-                  marginLeft: "20px",
-                  color:
-                    activeNav === "ethiopia" ? "orange" : "rgb(244,244,244)",
-                  borderBottom:
-                    activeNav === "ethiopia" ? "1px solid orange" : "",
-                }}
-                to="/Ethiopia"
-              >
-                Ethiopia
-              </Link>
-            </div>
-            <div>
-              <Link
-                style={{
-                  textDecoration: "none",
-                  marginLeft: "20px",
-                  color: activeNav === "about" ? "orange" : "rgb(244,244,244)",
-                  borderBottom: activeNav === "about" ? "1px solid orange" : "",
-                }}
-                to="/about"
-              >
-                About Us
-              </Link>
-            </div>
-          </Nav>
-          <Nav className="bg-dark text-light gap-3">
-            {!user && (
-              <div className="cont d-flex">
-                <div>
-                  <Link
-                    style={{ textDecoration: "none", marginLeft: "20px" }}
-                    className="text-light text-light btn btn-outline-primary"
-                    to="/login"
-                  >
-                    Login
-                  </Link>
-                </div>
-                <div>
-                  <Link
-                    style={{ textDecoration: "none", marginLeft: "20px" }}
-                    className="text-light text-light btn btn-outline-primary"
-                    to="/register"
-                  >
-                    Register
-                  </Link>
-                </div>
-              </div>
-            )}
-          </Nav>
-          {user && (
-            <button
-              type="button"
-              className="btn btn-outline-primary position-relative ms-auto text-white"
-              onClick={handleCart}
-            >
-              <FaLuggageCart />
-              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill ">
-                {state.length}
-              </span>
-            </button>
-          )}
-          <Nav className="bg-dark text-light gap-3 align-items-center">
-            <button
+        </Link>
+
+        <button 
+          className="navbar-toggler border-0 shadow-none" 
+          type="button"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        <div className={`collapse navbar-collapse ${isMobileMenuOpen ? 'show' : ''}`}>
+          <ul className="navbar-nav mx-auto align-items-center">
+            {navLinks.map((link) => (
+              <li key={link.name} className="nav-item">
+                <Link 
+                  className={`nav-link ${pathname === link.path ? 'active text-primary' : ''}`} 
+                  to={link.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          <div className="d-flex align-items-center gap-3">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={toggleTheme}
-              className="btn btn-outline-light ms-3"
-              style={{ borderRadius: "50%", padding: "5px 10px" }}
+              className="btn btn-link p-2 shadow-none border-0"
+              style={{ color: 'var(--text-color)' }}
             >
-              {isDarkMode ? <FaSun color="yellow" /> : <FaMoon />}
-            </button>
+              <AnimatePresence mode="wait">
+                {isDarkMode ? (
+                  <motion.div
+                    key="sun"
+                    initial={{ y: 10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -10, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Sun size={20} className="text-warning" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="moon"
+                    initial={{ y: 10, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    exit={{ y: -10, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Moon size={20} className="text-primary" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+
             {user && (
-              <div>
-                <Link
-                  to={"/"}
-                  style={{ textDecoration: "none", marginLeft: "20px" }}
-                  className="text-light text-light btn btn-outline-primary"
+              <Link to="/cart" className="btn btn-link p-2 position-relative text-decoration-none" style={{ color: 'var(--text-color)' }}>
+                <ShoppingBag size={20} />
+                {cartState.length > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: '0.6rem' }}>
+                    {cartState.length}
+                  </span>
+                )}
+              </Link>
+            )}
+
+            {!user ? (
+              <Link className="btn btn-primary rounded-pill px-4" to="/login">
+                Login
+              </Link>
+            ) : (
+              <div className="d-flex align-items-center gap-2">
+                <div className="d-flex flex-column align-items-end d-none d-lg-flex">
+                  <span className="fw-bold small">{user.detail?.name || 'User'}</span>
+                </div>
+                <button 
+                  className="btn btn-outline-primary rounded-pill px-3 py-1 d-flex align-items-center gap-2"
                   onClick={handleLogout}
                 >
-                  Logout
-                </Link>
+                  <LogOut size={16} />
+                  <span className="small">Logout</span>
+                </button>
               </div>
             )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+          </div>
+        </div>
+      </div>
+    </nav>
   );
 };
 

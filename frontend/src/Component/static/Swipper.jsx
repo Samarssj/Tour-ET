@@ -1,17 +1,33 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
-import { FaStar } from "react-icons/fa";
+import { Star, MapPin, Tag } from "lucide-react";
+import { motion } from "framer-motion";
 
 function Swipper(props) {
   const listData = props.data;
 
   return (
-    <div className="large-conatiner">
-      <div className="small-conatiner">
-        {listData?.map((indData) => {
-          return <Card key={indData._id} {...indData} />;
-        })}
+    <div className="py-4 overflow-hidden">
+      <div 
+        className="d-flex gap-4 pb-4 px-2" 
+        style={{ 
+          overflowX: 'auto', 
+          scrollbarWidth: 'none', 
+          msOverflowStyle: 'none',
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
+        {listData?.map((indData, idx) => (
+          <motion.div
+            key={indData._id || idx}
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ delay: idx * 0.1 }}
+            viewport={{ once: true }}
+          >
+            <Card {...indData} />
+          </motion.div>
+        ))}
       </div>
     </div>
   );
@@ -26,40 +42,45 @@ const Card = ({
   to_do_type,
   image,
 }) => {
-  const num = rating;
-  const stars = Array(parseInt(num)).fill(0);
+  const stars = Array(Math.round(rating || 0)).fill(0);
 
   return (
-    <div className="card shadow text-light p-1" style={{ width: "350px" }}>
+    <div className="card border-0 shadow-sm h-100" style={{ width: "320px", flex: '0 0 auto' }}>
       <Link className="text-decoration-none" to={`/package/${_id}`}>
-        <div className="img">
+        <div className="position-relative overflow-hidden" style={{ height: "220px" }}>
           <img
-            style={{ width: "100%", height: "300px", objectFit: "cover" }}
-            className="img-fluid"
-            src={image[0]}
-            alt=""
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            className="transition-all duration-500 hover-scale-110"
+            src={image && image[0]}
+            alt={name}
           />
-        </div>
-        <h2 className="text-lead text-primary py-2  text-dark fw-bold fs-5 text-capitalize">
-          {name}
-        </h2>
-        <h2
-          className="fw-lighter text-dark text-start px-3 "
-          style={{ fontSize: "1.1em" }}
-        >
-          Price :{pricePerAdult} Birr
-        </h2>
-        <div className="d-flex justify-content-between px-3 align-items-center">
-          <h2 className="text-muted lead mb-0" style={{ fontSize: "1.1em" }}>
-            Ethiopia/{location}
-          </h2>
-          <div className="text-warning d-inline">
-            {stars.map((_, index) => {
-              return <FaStar key={index} />;
-            })}
+          <div className="position-absolute top-0 end-0 m-2">
+            <span className="badge glass text-white rounded-pill px-3 py-2 small fw-bold">
+              {to_do_type}
+            </span>
           </div>
         </div>
-        <h2 className="text-dark m-0 me-2 text-end">{to_do_type}</h2>
+        
+        <div className="card-body p-3">
+          <div className="d-flex align-items-center gap-1 text-warning mb-2">
+            {stars.map((_, index) => (
+              <Star key={index} size={14} fill="currentColor" />
+            ))}
+            <span className="text-muted small ms-1">({rating || 0})</span>
+          </div>
+          
+          <h3 className="h6 fw-bold text-dark mb-2 text-truncate">{name}</h3>
+          
+          <div className="d-flex align-items-center gap-1 text-muted small mb-3">
+            <MapPin size={12} />
+            <span>{location}</span>
+          </div>
+          
+          <div className="d-flex justify-content-between align-items-center mt-auto">
+            <span className="fw-bold text-primary">{pricePerAdult} <small className="text-muted fw-normal">birr</small></span>
+            <span className="btn btn-link btn-sm p-0 text-decoration-none fw-bold">Details →</span>
+          </div>
+        </div>
       </Link>
     </div>
   );

@@ -1,50 +1,153 @@
-.ethiopia{
-    margin-top: 100px;
+.ethiopia {
+  overflow-x: hidden;
 }
-.ethio-topic {
-    font-family: 'Roboto Slab', serif;
+
+.ethio-hero {
+  position: relative;
+  height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.6)), url('../../assets/ethiopia.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+  border-radius: 0 0 60px 60px;
+  margin-bottom: 5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
 }
-.ethio {
-    margin-top: 150px;
-    font-size: 5rem;
+
+.ethio-title {
+  font-size: 5.5rem;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  text-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  margin-bottom: 0.5rem;
+  color: #ffffff !important;
 }
-.eth-img {
-    width: 80%;
-    max-width: 900px;
-    height: auto;
-    margin-bottom: 100px;
-    object-fit: cover;
+
+.ethio-subtitle {
+  font-size: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0.6em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
 }
-.para1 {
-    max-width: 900px;
+
+.content-section {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
 }
-.para2 {
-    max-width: 900px;
+
+.story-para {
+  font-size: 1.2rem;
+  line-height: 1.9;
+  margin-bottom: 3rem;
+  color: var(--text-color) !important;
+  text-align: justify;
 }
-.img2 {
-    width: 300px;
+
+.highlight-box {
+  background-color: var(--bg-secondary);
+  border-left: 6px solid var(--accent-color);
+  padding: 3rem;
+  border-radius: 0 24px 24px 0;
+  margin: 5rem 0;
+  box-shadow: var(--card-shadow);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 }
-.desc-container {
-    margin-top: 100px;
+
+.highlight-box img {
+  width: 150px;
+  height: auto;
+  border-radius: 50%;
 }
-.land {
-    font-family: 'Roboto Slab', serif;
-    font-size: 2.5rem;
+
+.highlight-text {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--text-color) !important;
+  margin: 0;
 }
-.things-topic {
-    font-family: 'Roboto Slab', serif;
-    font-size: 2.5rem;
+
+.things-to-do-header {
+  text-align: center;
+  margin: 6rem 0 3rem;
 }
-.things-desc {
-    max-width: 900px;
+
+.things-to-do-header h2 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
 }
-.images {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 30px;
-    margin:  70px 0;
+
+.experience-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 6rem;
 }
-.images img {
-    width: 300px;
+
+.experience-card {
+  position: relative;
+  height: 450px;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+.experience-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.experience-card:hover img {
+  transform: scale(1.15);
+}
+
+.experience-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.4) 50%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2.5rem;
+  color: white;
+}
+
+.experience-overlay h4 {
+  color: white !important;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.experience-overlay p {
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .ethio-title {
+    font-size: 3rem;
+  }
+  .ethio-hero {
+    height: 50vh;
+    border-radius: 0 0 30px 30px;
+  }
+  .highlight-box {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
+  }
 }
