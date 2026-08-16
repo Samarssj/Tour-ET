@@ -1,32 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAuthContext } from "./useAuthContext";
 
 const useFetch = (url, dep = null) => {
   const { user } = useAuthContext();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const fetchData = async () => {
+  const [error, setError] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await fetch(url, {
         headers: {
-          Authorization: `Bearer ${user?.token}`,
+          Authorization: user?.token ? `Bearer ${user.token}` : undefined,
         },
       });
 
-      const { data } = await response.json();
-
-      if (response.ok) {
-        setLoading(false);
-        setData(data);
+      if (!response.ok) {
+        throw new Error(`Fetch failed with status ${response.status}`);
       }
-    } catch (error) {
-      console.log("use fetch error");
+
+      const result = await response.json();
+      setData(result.data);
+      setError(null);
+    } catch (err) {
+      console.error("useFetch error:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [url, user?.token]);
+
   useEffect(() => {
     fetchData();
-  }, [dep]);
+  }, [fetchData, dep]);
 
-  return { data, loading };
+  return { data, loading, error, refetch: fetchData };
 };
+
 export default useFetch;
