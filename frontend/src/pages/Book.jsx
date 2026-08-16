@@ -24,7 +24,7 @@ function Book() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { user } = useAuthContext();
 
-  const { data: hotels } = useFetch(
+  const { data: hotels, loading: loadingHotels } = useFetch(
     `${process.env.REACT_APP_BACKEND_URL}/package/${id}/hotel`
   );
   const { data: pkg } = useFetch(
@@ -304,7 +304,12 @@ function Book() {
               </h3>
               <div className="row g-4">
                 {!roomSelect ? (
-                  hotels && hotels.length > 0 ? (
+                  loadingHotels ? (
+                    <div className="col-12 text-center py-5">
+                      <div className="spinner-border text-primary" role="status"></div>
+                      <p className="text-muted mt-2">Finding best accommodations...</p>
+                    </div>
+                  ) : hotels && hotels.length > 0 ? (
                     hotels.map((hotel, idx) => (
                       <div className="col-12 col-md-6 col-lg-4" key={idx}>
                         <Hotel {...hotel} book={book} setBook={setBook} setRoomSelect={setRoomSelect} />

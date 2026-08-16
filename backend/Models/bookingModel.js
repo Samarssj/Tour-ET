@@ -28,6 +28,9 @@ const bookingSchema = new mongoose.Schema({
     phone: {
         type: String,
     },
+    date: {
+        type: String,
+    },
     numberOfPeople: {
         type: Number,
         required: true

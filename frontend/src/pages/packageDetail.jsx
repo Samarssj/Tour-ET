@@ -98,13 +98,14 @@ function PackageDetail() {
   return (
     <div className="main-content-wrapper pb-5">
       {/* Hero Section */}
-      <div className="position-relative vh-75 overflow-hidden bg-dark">
+      <div className="position-relative vh-75 overflow-hidden bg-secondary">
         <motion.img 
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.5 }}
           src={heroImage} 
-          className="w-100 h-100 object-fit-cover opacity-75"
+          className="w-100 h-100 object-fit-cover"
+          style={{ opacity: 0.85 }}
           alt={site.name} 
           onError={(e) => {
             e.target.src = fallbackImage;
