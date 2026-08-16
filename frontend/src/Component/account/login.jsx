@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useAuthContext } from "../../customHook/useAuthContext";
+import { motion } from "framer-motion";
+import { LogIn, Mail, Lock, AlertCircle } from "lucide-react";
 
 const Login = () => {
   const [fullInfo, setFullInfo] = useState({});
@@ -12,108 +14,130 @@ const Login = () => {
     const { name, value } = e.target;
     setFullInfo({ ...fullInfo, [name]: value });
   };
+
   const handelSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/user/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(fullInfo),
-      }
-    );
-    const result = await response.json();
-    if (!fullInfo) {
-      setError("enter full credential");
-    }
-    if (!response.ok) {
-      setError(result.msg);
-    }
-    if (response.ok) {
-      localStorage.setItem("user", JSON.stringify(result.data));
-      dispatch({ type: "LOGIN", payload: result.data });
-
-      if (result.data.detail.role === "admin") {
-        history.push("/admin");
+    setError("");
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/user/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(fullInfo),
+        }
+      );
+      const result = await response.json();
+      if (!response.ok) {
+        setError(result.msg || "Login failed. Please check your credentials.");
       } else {
-        history.push("/");
+        localStorage.setItem("user", JSON.stringify(result.data));
+        dispatch({ type: "LOGIN", payload: result.data });
+        if (result.data.detail.role === "admin") {
+          history.push("/admin");
+        } else {
+          history.push("/");
+        }
       }
+    } catch (err) {
+      setError("Network error. Please try again later.");
     }
   };
 
   return (
-    <section className="auth-section">
-      <div
-        className="container-md d-flex align-items-center justify-content-center"
-        style={{ height: "100vh" }}
-      >
-        <div
-          className="row align-items-center justify-content-center p-5"
-          style={{ flex: "1" }}
-        >
-          <div
-            className=" col-md-6 p-5  shadow"
-            className="col-md-6 p-5 shadow auth-card"
-            style={{ borderRadius: "50px" }}
+    <section className="auth-section main-content-wrapper">
+      <div className="container">
+        <div className="row align-items-center justify-content-center">
+          <motion.div 
+            className="col-12 col-md-5"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            <div>{error && <p>{error}</p>}</div>
-            <div className="form text-start">
+            <div className="auth-card shadow-lg">
+              <div className="text-center mb-5">
+                <div className="bg-primary-subtle d-inline-block p-3 rounded-circle mb-3">
+                  <LogIn size={32} className="text-primary" />
+                </div>
+                <h2 className="fw-bold">Welcome Back</h2>
+                <p className="text-muted">Sign in to continue your journey</p>
+              </div>
+
+              {error && (
+                <motion.div 
+                  className="alert alert-danger d-flex align-items-center gap-2 py-2 px-3 mb-4 rounded-3"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <AlertCircle size={18} />
+                  <span className="small">{error}</span>
+                </motion.div>
+              )}
+
               <form onSubmit={handelSubmit}>
-                <div className="email mb-3">
-                  <label htmlFor="name" className="form-label">
-                    Email
-                  </label>
-                  <input
-                    className="form-control"
-                    type="email"
-                    id="name"
-                    placeholder="enter your name"
-                    name="email"
-                    onChange={(e) => handleChange(e)}
-                    required
-                  />
+                <div className="mb-4">
+                  <label className="form-label small fw-bold text-uppercase text-muted">Email Address</label>
+                  <div className="input-group">
+                    <span className="input-group-text bg-transparent border-end-0">
+                      <Mail size={18} className="text-muted" />
+                    </span>
+                    <input
+                      className="form-control border-start-0 ps-0"
+                      type="email"
+                      placeholder="name@example.com"
+                      name="email"
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label">
-                    Password
-                  </label>
-                  <input
-                    className="form-control"
-                    type="password"
-                    id="password"
-                    name="password"
-                    onChange={(e) => handleChange(e)}
-                    required
-                  />
+
+                <div className="mb-5">
+                  <label className="form-label small fw-bold text-uppercase text-muted">Password</label>
+                  <div className="input-group">
+                    <span className="input-group-text bg-transparent border-end-0">
+                      <Lock size={18} className="text-muted" />
+                    </span>
+                    <input
+                      className="form-control border-start-0 ps-0"
+                      type="password"
+                      placeholder="••••••••"
+                      name="password"
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="text-center">
-                  <button
-                    type="submit"
-                    style={{ width: "" }}
-                    className="btn btn-secondary mb-5 w-50"
-                  >
-                    Login
-                  </button>
-                  <p className="mb-3">
-                    I'm new here?{" "}
-                    <Link to={`/register`} className="h-4">
-                      Sign up
-                    </Link>{" "}
-                  </p>
-                </div>
+
+                <button type="submit" className="btn btn-primary w-100 py-3 mb-4">
+                  Sign In
+                </button>
+
+                <p className="text-center text-muted small mb-0">
+                  New to Tour ET?{" "}
+                  <Link to="/register" className="text-primary fw-bold text-decoration-none">
+                    Create an account
+                  </Link>
+                </p>
               </form>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="d-none d-md-block col-md-6">
+          <motion.div 
+            className="col-12 col-md-6 d-none d-md-block text-center"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
             <img
               src="https://th.bing.com/th/id/R.3c2473019a11b804e25c80baa314a225?rik=O0%2bJgGBVjU7Kmw&pid=ImgRaw&r=0"
-              width={"75%"}
-              alt=""
+              className="img-fluid"
+              style={{ maxWidth: '80%', filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.1))' }}
+              alt="Login Illustration"
             />
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
