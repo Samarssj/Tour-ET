@@ -94,17 +94,29 @@ const Home = () => {
       variants={containerVariants}
     >
       {/* Hero Search Section */}
-      <div className="hero-section position-relative py-5 overflow-hidden" style={{ minHeight: '60vh', display: 'flex', alignItems: 'center' }}>
+      <div 
+        className="hero-section position-relative py-5 overflow-hidden" 
+        style={{ 
+          minHeight: '85vh', 
+          display: 'flex', 
+          alignItems: 'center',
+          backgroundImage: 'linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.5)), url("https://images.unsplash.com/photo-1541432901912-2d8868175450?auto=format&fit=crop&w=1920&q=80")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
         <div className="container text-center z-index-1">
           <motion.h1 
-            className="display-3 fw-bold mb-4"
+            className="display-3 fw-bold mb-4 text-white"
             variants={itemVariants}
+            style={{ textShadow: '0 4px 12px rgba(0,0,0,0.3)' }}
           >
             Discover the Heart of <span className="text-primary">Ethiopia</span>
           </motion.h1>
           <motion.p 
-            className="lead mb-5 text-secondary mx-auto" 
-            style={{ maxWidth: '600px' }}
+            className="lead mb-5 text-white-50 mx-auto" 
+            style={{ maxWidth: '600px', textShadow: '0 2px 8px rgba(0,0,0,0.3)' }}
             variants={itemVariants}
           >
             From ancient wonders to breathtaking landscapes, start your journey in the cradle of mankind.
