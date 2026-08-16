@@ -151,3 +151,88 @@
     padding: 2rem;
   }
 }
+
+/* Experience Detail Modal Styles */
+.exp-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.exp-modal-content {
+  background-color: var(--bg-color);
+  width: 100%;
+  max-width: 1000px;
+  height: auto;
+  max-height: 90vh;
+  border-radius: 32px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.exp-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--bg-secondary);
+  border: none;
+  color: var(--text-color);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.exp-modal-close:hover {
+  transform: rotate(90deg);
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.exp-modal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.exp-modal-icon {
+  background-color: var(--bg-secondary);
+  padding: 15px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--card-shadow);
+}
+
+.exp-modal-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  text-align: justify;
+}
+
+@media (max-width: 768px) {
+  .exp-modal-content {
+    max-height: 85vh;
+  }
+  .exp-modal-text {
+    font-size: 1rem;
+  }
+}
