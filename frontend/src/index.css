@@ -409,3 +409,19 @@ body.dark-mode .lead {
   -webkit-box-orient: vertical;  
   overflow: hidden;
 }
+
+/* Robust Hero Background */
+.hero-background-main {
+  background: linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.5)), 
+              url("https://images.unsplash.com/photo-1541432901912-2d8868175450?auto=format&fit=crop&w=1920&q=80") no-repeat center center;
+  background-size: cover !important;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+}
+
+body.dark-mode .hero-background-main {
+  background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), 
+              url("https://images.unsplash.com/photo-1541432901912-2d8868175450?auto=format&fit=crop&w=1920&q=80") no-repeat center center;
+  background-size: cover !important;
+}

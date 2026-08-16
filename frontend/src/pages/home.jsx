@@ -94,18 +94,7 @@ const Home = () => {
       variants={containerVariants}
     >
       {/* Hero Search Section */}
-      <div 
-        className="hero-section position-relative py-5 overflow-hidden" 
-        style={{ 
-          minHeight: '85vh', 
-          display: 'flex', 
-          alignItems: 'center',
-          backgroundImage: 'linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.5)), url("https://images.unsplash.com/photo-1541432901912-2d8868175450?auto=format&fit=crop&w=1920&q=80")',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
-      >
+      <div className="hero-section hero-background-main position-relative py-5 overflow-hidden">
         <div className="container text-center z-index-1">
           <motion.h1 
             className="display-3 fw-bold mb-4 text-white"
