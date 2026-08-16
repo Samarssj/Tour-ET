@@ -42,8 +42,13 @@ function Book() {
       return;
     }
 
-    if (!book.firstName || !book.lastName || !book.phone || !book.payment) {
-      setError("Please fill in all details and select a payment method");
+    if (!book.firstName || !book.phone || !book.payment) {
+      setError("Please fill in your name, phone number, and select a payment method");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(book.phone)) {
+      setError("Phone number must be exactly 10 digits");
       return;
     }
 
@@ -95,8 +100,13 @@ function Book() {
       return;
     }
 
-    if (!book.firstName || !book.lastName || !book.phone) {
+    if (!book.firstName || !book.phone) {
       setError("Please provide your name and phone number before calculating the price.");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(book.phone)) {
+      setError("Phone number must be exactly 10 digits");
       return;
     }
 
@@ -202,12 +212,11 @@ function Book() {
               <div className="col-md-4">
                 <input
                   type="text"
-                  placeholder="Last Name"
+                  placeholder="Last Name (Optional)"
                   name="lastName"
                   value={book.lastName}
                   onChange={handleChange}
                   className="form-control"
-                  required
                 />
               </div>
               <div className="col-md-4">
@@ -215,10 +224,13 @@ function Book() {
                   <span className="input-group-text bg-transparent"><FaPhone /></span>
                   <input
                     type="tel"
-                    placeholder="Phone Number"
+                    placeholder="Phone Number (10 digits)"
                     name="phone"
                     value={book.phone}
-                    onChange={handleChange}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      setBook({ ...book, phone: val });
+                    }}
                     className="form-control"
                     required
                   />
@@ -282,11 +294,19 @@ function Book() {
               </h3>
               <div className="row g-4">
                 {!roomSelect ? (
-                  hotels?.map((hotel, idx) => (
-                    <div className="col-12 col-md-6 col-lg-4" key={idx}>
-                      <Hotel {...hotel} book={book} setBook={setBook} setRoomSelect={setRoomSelect} />
+                  hotels && hotels.length > 0 ? (
+                    hotels.map((hotel, idx) => (
+                      <div className="col-12 col-md-6 col-lg-4" key={idx}>
+                        <Hotel {...hotel} book={book} setBook={setBook} setRoomSelect={setRoomSelect} />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="col-12 text-center py-5">
+                      <div className="bg-light p-4 rounded-4">
+                        <p className="text-muted mb-0">No hotels currently available for this location. Please try again later.</p>
+                      </div>
                     </div>
-                  ))
+                  )
                 ) : (
                   <motion.div 
                     initial={{ scale: 0.9, opacity: 0 }}

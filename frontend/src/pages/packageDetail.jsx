@@ -100,9 +100,12 @@ function PackageDetail() {
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.5 }}
-          src={site.image[0]} 
+          src={site.image && site.image[0] ? site.image[0] : "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80"} 
           className="w-100 h-100 object-fit-cover"
           alt={site.name} 
+          onError={(e) => {
+            e.target.src = "https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1200&q=80";
+          }}
         />
         <div className="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-40 d-flex align-items-end">
           <div className="container pb-5">
