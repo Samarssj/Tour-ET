@@ -412,16 +412,18 @@ body.dark-mode .lead {
 
 /* Robust Hero Background */
 .hero-background-main {
-  background: linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.5)), 
-              url("https://images.unsplash.com/photo-1541432901912-2d8868175450?auto=format&fit=crop&w=1920&q=80") no-repeat center center;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+              url("https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?q=80&w=2070&auto=format&fit=crop") no-repeat center center;
   background-size: cover !important;
+  background-attachment: scroll !important;
   min-height: 85vh;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 body.dark-mode .hero-background-main {
-  background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), 
-              url("https://images.unsplash.com/photo-1541432901912-2d8868175450?auto=format&fit=crop&w=1920&q=80") no-repeat center center;
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+              url("https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?q=80&w=2070&auto=format&fit=crop") no-repeat center center;
   background-size: cover !important;
 }
