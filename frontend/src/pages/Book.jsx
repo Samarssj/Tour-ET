@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { FaUserCircle, FaPhone, FaCalendarAlt, FaCalculator, FaCheckCircle } from "react-icons/fa";
+import { FaUserCircle, FaPhone, FaCalendarAlt, FaCalculator, FaCheckCircle, FaTimes } from "react-icons/fa";
 import { useHistory, useParams } from "react-router-dom";
 import { useAuthContext } from "../customHook/useAuthContext.js";
 import Hotel from "../Component/Book/Hotel.jsx";
 import useFetch from "../customHook/useFetch.js";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertCircle, CreditCard, Wallet } from "lucide-react";
+import { AlertCircle, CreditCard, Wallet, CheckCircle2 } from "lucide-react";
 
 function Book() {
   const history = useHistory();
@@ -14,12 +14,14 @@ function Book() {
     firstName: "",
     lastName: "",
     phone: "",
-    payment: ""
+    payment: "",
+    date: ""
   });
   const [numTour, setNumTour] = useState(1);
   const [roomSelect, setRoomSelect] = useState(false);
   const [totalPrice, setTotal] = useState(0);
   const [error, setError] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { user } = useAuthContext();
 
   const { data: hotels } = useFetch(
@@ -42,8 +44,8 @@ function Book() {
       return;
     }
 
-    if (!book.firstName || !book.phone || !book.payment) {
-      setError("Please fill in your name, phone number, and select a payment method");
+    if (!book.firstName || !book.phone || !book.payment || !book.date) {
+      setError("Please fill in your name, travel date, phone number, and select a payment method");
       return;
     }
 
@@ -57,7 +59,7 @@ function Book() {
       return;
     }
 
-    const { hotelId, roomId, payment } = book;
+    const { hotelId, roomId, payment, firstName, lastName, phone, date } = book;
     const body = {
       hotel: hotelId,
       room: roomId,
@@ -66,9 +68,10 @@ function Book() {
       name: pkg.name,
       numberOfPeople: numTour,
       price: totalPrice,
-      firstName: book.firstName,
-      lastName: book.lastName,
-      phone: book.phone
+      firstName,
+      lastName,
+      phone,
+      date
     };
 
     try {
@@ -84,7 +87,7 @@ function Book() {
         }
       );
       if (response.ok) {
-        history.push("/");
+        setShowSuccessModal(true);
       } else {
         const result = await response.json();
         setError(result.msg || "Booking failed. Please try again.");
@@ -178,7 +181,14 @@ function Book() {
                 <label className="form-label fw-bold small text-uppercase text-muted">Travel Date</label>
                 <div className="input-group">
                   <span className="input-group-text bg-transparent"><FaCalendarAlt /></span>
-                  <input type="date" name="date" className="form-control" required />
+                  <input 
+                    type="date" 
+                    name="date" 
+                    className="form-control" 
+                    value={book.date}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
               </div>
               <div className="col-md-6">
@@ -339,6 +349,70 @@ function Book() {
           </form>
         </motion.div>
       </div>
+
+      {/* Success Modal */}
+      <AnimatePresence>
+        {showSuccessModal && (
+          <div className="modal-overlay" style={{
+            position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000, padding: '20px'
+          }}>
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="card border-0 shadow-2xl p-4 p-md-5 text-center"
+              style={{ maxWidth: '500px', backgroundColor: 'var(--bg-color)' }}
+            >
+              <button 
+                onClick={() => history.push('/')}
+                className="btn btn-link text-muted position-absolute top-0 end-0 m-3 p-0"
+              >
+                <FaTimes size={24} />
+              </button>
+              
+              <div className="bg-success-subtle text-success p-4 rounded-circle d-inline-block mb-4">
+                <CheckCircle2 size={64} />
+              </div>
+              
+              <h2 className="h3 fw-bold mb-2">Booking Confirmed!</h2>
+              <p className="text-muted mb-5">Your adventure is officially reserved. Get ready for an unforgettable journey!</p>
+              
+              <div className="bg-light p-4 rounded-4 text-start mb-4">
+                <div className="row g-3">
+                  <div className="col-6">
+                    <span className="text-muted small d-block">Traveler Name</span>
+                    <span className="fw-bold">{book.firstName} {book.lastName}</span>
+                  </div>
+                  <div className="col-6">
+                    <span className="text-muted small d-block">Phone Number</span>
+                    <span className="fw-bold">{book.phone}</span>
+                  </div>
+                  <div className="col-6">
+                    <span className="text-muted small d-block">Travel Date</span>
+                    <span className="fw-bold">{book.date}</span>
+                  </div>
+                  <div className="col-6">
+                    <span className="text-muted small d-block">Group Size</span>
+                    <span className="fw-bold">{numTour} Person(s)</span>
+                  </div>
+                  <div className="col-12 border-top pt-2 mt-2">
+                    <span className="text-muted small d-block">Accommodation</span>
+                    <span className="fw-bold text-primary">{book.roomBody}</span>
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => history.push('/')}
+                className="btn btn-primary w-100 rounded-pill py-3 fw-bold"
+              >
+                Back to Home
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
