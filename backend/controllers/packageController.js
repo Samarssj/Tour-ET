@@ -73,7 +73,7 @@ export const getPkgHotel = async (req, res) => {
     const selectedpkg = await Package.find({ _id: pkg_id });
 
     const pkg = selectedpkg[0].location;
-    const hotel = await Hotel.find({ location: pkg });
+    const hotel = await Hotel.find({ location: { $regex: new RegExp(`^${pkg}$`, 'i') } });
 
     if (!hotel) {
       return res.status(404).json({ msg: "no such package exists sorry " });
