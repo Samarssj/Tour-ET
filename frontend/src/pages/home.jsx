@@ -14,7 +14,7 @@ const Home = () => {
   const banner2Info = {
     left: false,
     buttonText: "Explore more",
-    path: "/",
+    path: "/Ethiopia",
     title: "More about ethiopia",
     img: "https://destinationreporterindia.com/wp-content/uploads/2019/04/DR-WEB-Ethiopia.jpg",
     text: "Ethiopia is home to the lowest place on the African continent, the Danakil Depression. The depression is at the junction of three tectonic plates in the Horn of Africa, and sits at approximately 125 metres below sea level. At 200 kilometres long by 50 metres wide, this relatively small desert is also home to roughly 25% of Africa’s volcanoes!",
@@ -23,7 +23,7 @@ const Home = () => {
   const banner1Info = {
     left: true,
     buttonText: "Explore more",
-    path: "/",
+    path: "/Ethiopia",
     title: "Visit Ethiopia Now",
     img: "https://www.begatoursethiopia.com/images/collage.jpg",
     text: "Ethiopia is home to the lowest place on the African continent, the Danakil Depression. The depression is at the junction of three tectonic plates in the Horn of Africa, and sits at approximately 125 metres below sea level. At 200 kilometres long by 50 metres wide, this relatively small desert is also home to roughly 25% of Africa’s volcanoes!",
