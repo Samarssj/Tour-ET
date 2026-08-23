@@ -98,16 +98,58 @@ Seamless reservation process with instant digital confirmation.
    cd ../frontend && npm install
    ```
 3. **Environment Setup**
-   Configure your `MONGODBURL`, `KEY` (JWT), and `PORT` in the backend `.env`.
-4. **Run Application**
+   Create the backend environment file from the provided template:
    ```sh
-   npm start # in both folders
+   cd backend
+   cp .env.example .env
+   ```
+   Set `MONGODBURL`, `KEY` (JWT), `PORT=5000`, and `GEMINI_API_KEY` in `backend/.env`. The Gemini key should be a Google AI Studio API key and must remain server-side.
+4. **Run Application**
+   Start the backend and frontend in separate terminals:
+   ```sh
+   # Terminal 1
+   cd backend && npm start
+
+   # Terminal 2
+   cd frontend && npm start
    ```
 
 ### Gemini Travel Assistant
-The site now includes an **Ask TourET** toggle available throughout the main browsing experience. It sends natural-language trip questions to a server-side assistant endpoint, which grounds suggestions in the current TourET package and hotel catalog.
+The site includes an **Ask TourET** toggle throughout the main browsing experience. Travelers can ask natural-language questions about Ethiopian places, TourET packages, hotels, duration, travel style, and budget. For example:
 
-To enable the live Gemini response locally, copy `backend/.env.example` to `backend/.env`, add a Google AI Studio API key as `GEMINI_API_KEY`, and restart the backend. The server calls Gemini's model-listing endpoint and selects the newest compatible model that supports `generateContent`, caching the result for ten minutes so newer available models are picked up automatically without changing frontend code. The key is never sent to the browser.
+> I have $700 for five days in Ethiopia. Which places and TourET hotels would work best for a relaxed cultural trip?
+
+The browser sends the conversation to the server-side endpoint below; the Gemini API key is never exposed to the browser.
+
+```text
+POST /api/assistant/chat
+```
+
+The backend loads the current TourET package and hotel catalog from MongoDB and instructs Gemini to ground suggestions in that data. It does not invent package prices, hotel prices, availability, or booking confirmations. Suggestions remain informational, and travelers should confirm current availability before booking.
+
+The assistant dynamically calls Gemini's [model-listing endpoint](https://ai.google.dev/api/models), filters for compatible chat models that support `generateContent`, and selects the newest available model based on version, stability, and capability. The selected model is cached for ten minutes, so newer compatible models can be picked up automatically without a frontend code change. See Google's [Gemini models guide](https://ai.google.dev/gemini-api/docs/models) for current model availability.
+
+### Render Deployment
+The repository's `render.yaml` defines two services:
+
+| Render service | Configuration |
+| --- | --- |
+| `tesystem` | Node/Express backend rooted at `backend`, listening on port `5000`. |
+| `tesystem-frontend` | Static React frontend rooted at `frontend`, built with `npm install && npm run build`. |
+
+After pushing changes to GitHub, add the following variable in **Render → tesystem → Environment** and redeploy the backend:
+
+```text
+GEMINI_API_KEY=your-google-ai-studio-api-key
+```
+
+Keep the existing backend variables `MONGODBURL`, `KEY`, and `PORT=5000`. The frontend already has the following value in `render.yaml`, so no new frontend variable is required:
+
+```text
+REACT_APP_BACKEND_URL=https://tesystem.onrender.com/api
+```
+
+Redeploy the frontend as well so Render rebuilds the latest React code. Once both services are running, open the deployed frontend, select **Ask TourET**, and send a budget-aware trip question. If `GEMINI_API_KEY` is missing or invalid, the assistant displays a configuration or API error rather than exposing the credential.
 
 ---
 <p align="center">
