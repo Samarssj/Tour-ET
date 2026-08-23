@@ -12,6 +12,7 @@ import bookingRouter from "./routes/bookingRouter.js";
 import roomRouter from "./routes/roomRouter.js";
 import wishlistRouter from "./routes/wishlistRouter.js";
 import contactRouter from "./routes/contactRouter.js";
+import assistantRouter from "./routes/assistantRouter.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use("/api/hotel", hotelRouter);
 app.use("/api/room", roomRouter);
 app.use("/api/booking", bookingRouter);
 app.use("/api/contact", contactRouter);
+app.use("/api/assistant", assistantRouter);
 
 mongoose.set("strictQuery", false);
 async function connectToDb() {

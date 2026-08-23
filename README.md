@@ -104,6 +104,11 @@ Seamless reservation process with instant digital confirmation.
    npm start # in both folders
    ```
 
+### Gemini Travel Assistant
+The site now includes an **Ask TourET** toggle available throughout the main browsing experience. It sends natural-language trip questions to a server-side assistant endpoint, which grounds suggestions in the current TourET package and hotel catalog.
+
+To enable the live Gemini response locally, copy `backend/.env.example` to `backend/.env`, add a Google AI Studio API key as `GEMINI_API_KEY`, and restart the backend. The server calls Gemini's model-listing endpoint and selects the newest compatible model that supports `generateContent`, caching the result for ten minutes so newer available models are picked up automatically without changing frontend code. The key is never sent to the browser.
+
 ---
 <p align="center">
   Made with ❤️ for Ethiopia

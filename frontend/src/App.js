@@ -17,6 +17,7 @@ import Footer from "./Component/static/Footer";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Ethiopia from "./pages/Ethiopia/Ethiopia";
 import React from "react";
+import TravelAssistant from "./Component/assistant/TravelAssistant";
 
 function App() {
   return (
@@ -67,6 +68,7 @@ function App() {
                 </Route>
               </Switch>
               <Footer />
+              <TravelAssistant />
             </Route>
           </Switch>
         </div>
