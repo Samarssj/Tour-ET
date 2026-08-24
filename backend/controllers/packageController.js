@@ -57,11 +57,29 @@ export const getPackage = async (req, res) => {
 export const getPkgComment = async (req, res) => {
   const pkg_id = req.params.id;
   try {
-    const pkg = await Comment.find({ pkg: pkg_id });
-    if (!pkg) {
+    const comments = await Comment.find({ pkg: pkg_id }).lean();
+    if (!comments) {
       return res.status(404).json({ msg: "no such package exists sorry " });
     }
-    return res.status(200).json({ data: pkg });
+
+    const viewer = await authorizationChecker(req);
+    const likedCommentIds = new Set(
+      typeof viewer === "string" ? [] : (viewer.likedComment || []).map((id) => String(id))
+    );
+    const dislikedCommentIds = new Set(
+      typeof viewer === "string" ? [] : (viewer.dislikedComment || []).map((id) => String(id))
+    );
+
+    const data = comments.map((comment) => ({
+      ...comment,
+      viewerReaction: likedCommentIds.has(String(comment._id))
+        ? "like"
+        : dislikedCommentIds.has(String(comment._id))
+          ? "dislike"
+          : "none",
+    }));
+
+    return res.status(200).json({ data });
   } catch (error) {
     res.status(400).json({ msg: error.message });
   }

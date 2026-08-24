@@ -2,7 +2,7 @@
 import express from "express";
 
 // import controllers
-import { getComment, addComment, updateComment } from "../controllers/commentController.js";
+import { getComment, addComment, updateComment, reactToComment } from "../controllers/commentController.js";
 
 const commentRouter = express.Router();
 
@@ -15,6 +15,7 @@ const commentRouter = express.Router();
 commentRouter.get("/", getComment);
 commentRouter.post("/", addComment);
 commentRouter.patch("/:id", updateComment);
+commentRouter.patch("/:id/reaction", reactToComment);
 
 
 

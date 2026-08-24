@@ -10,12 +10,19 @@ import {
 } from "react-icons/ai";
 import { FaUserCircle } from "react-icons/fa";
 
+const getBackendUrl = () =>
+  (process.env.REACT_APP_BACKEND_URL || "http://localhost:5000/api").replace(/\/$/, "");
+
 function Review({ unique }) {
   const [reviews, setReviews] = useState([]);
+  const { user: realUser } = useAuthContext();
 
   const fetchReview = async () => {
     const response = await fetch(
-      `${process.env.REACT_APP_BACKEND_URL}/package/${unique}/comment`
+      `${getBackendUrl()}/package/${unique}/comment`,
+      realUser?.token
+        ? { headers: { Authorization: `Bearer ${realUser.token}` } }
+        : undefined
     );
     const result = await response.json();
 
@@ -25,7 +32,7 @@ function Review({ unique }) {
   };
   useEffect(() => {
     fetchReview();
-  }, []);
+  }, [unique, realUser?.token]);
 
   if (reviews.length === 0) {
     return <h3 className="py-3">No review for this package. Be the first</h3>;
@@ -49,72 +56,54 @@ function Review({ unique }) {
   );
 }
 
-const EachReview = ({ _id, user, text, like, dislike, rating }) => {
+const EachReview = ({ _id, user, text, like, dislike, rating, viewerReaction }) => {
   const { user: realUser } = useAuthContext();
-
-  const [liked, setLike] = useState(realUser.detail.likedComment.includes(_id));
-  const [disliked, setDislike] = useState(
-    realUser.detail.dislikedComment.includes(_id)
+  const initialReaction = viewerReaction || (
+    realUser?.detail?.likedComment?.some((id) => String(id) === String(_id))
+      ? "like"
+      : realUser?.detail?.dislikedComment?.some((id) => String(id) === String(_id))
+        ? "dislike"
+        : "none"
   );
-  const [likeNO, setLiked] = useState(like);
-  const [dislikeNO, setDisliked] = useState(dislike);
 
-  const handelLike = async (e) => {
-    let like = likeNO;
-    let dislike = dislikeNO;
-    setLike(!liked);
-    if (liked) {
-      setLiked(likeNO - 1);
-      like = -1;
-    } else {
-      if (disliked) {
-        setDisliked(dislikeNO - 1);
-        dislike -= 1;
-      }
-      setLiked(likeNO + 1);
-      like++;
+  const [liked, setLike] = useState(initialReaction === "like");
+  const [disliked, setDislike] = useState(initialReaction === "dislike");
+  const [likeNO, setLiked] = useState(like || 0);
+  const [dislikeNO, setDisliked] = useState(dislike || 0);
+  const [reactionError, setReactionError] = useState("");
+
+  const updateReaction = async (reaction) => {
+    if (!realUser?.token) {
+      setReactionError("Please login to react to a review.");
+      return;
     }
-    setDislike(false);
-    await fetch(`http://localhost:5000/api/comment/${_id}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        like,
-        dislike,
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: `Bearer ${realUser.token}`,
-      },
-    });
-  };
-  const handelDislike = async (e) => {
-    let like = likeNO;
-    let dislike = dislikeNO;
-    setLike(false);
-    setDislike(!disliked);
-    if (dislikeNO) {
-      setDisliked(dislikeNO - 1);
-      dislike -= 1;
-    } else {
-      if (liked) {
-        setLiked(likeNO - 1);
-        like -= 1;
+
+    setReactionError("");
+    try {
+      const response = await fetch(`${getBackendUrl()}/comment/${_id}/reaction`, {
+        method: "PATCH",
+        body: JSON.stringify({ reaction }),
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+          Authorization: `Bearer ${realUser.token}`,
+        },
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.msg || "Unable to save your reaction.");
       }
-      setDisliked(dislikeNO + 1);
-      dislike++;
+
+      setLike(result.reaction === "like");
+      setDislike(result.reaction === "dislike");
+      setLiked(result.data.like || 0);
+      setDisliked(result.data.dislike || 0);
+    } catch (error) {
+      setReactionError(error.message);
     }
-    await fetch(`http://localhost:5000/api/comment/${_id}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        like,
-        dislike,
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-        Authorization: `Bearer ${realUser.token}`,
-      },
-    });
   };
+
+  const handelLike = () => updateReaction(liked ? "none" : "like");
+  const handelDislike = () => updateReaction(disliked ? "none" : "dislike");
   // const star = Array(parseInt(rating)).fill(0);
 
   return (
@@ -134,6 +123,7 @@ const EachReview = ({ _id, user, text, like, dislike, rating }) => {
                 {!disliked && <AiOutlineDislike onClick={handelDislike} />}{" "}
                 {disliked && <AiTwotoneDislike onClick={handelDislike} />}
                 <span>{dislikeNO}</span>
+                {reactionError && <small className="text-danger d-block">{reactionError}</small>}
               </span>
             </div>
           </div>
